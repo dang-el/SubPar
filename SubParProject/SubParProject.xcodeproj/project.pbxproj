@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7C3BFBEC2C8F6A9B00F7F369 /* SubParProjectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFBEB2C8F6A9B00F7F369 /* SubParProjectApp.swift */; };
-		7C3BFBEE2C8F6A9B00F7F369 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFBED2C8F6A9B00F7F369 /* ContentView.swift */; };
+		7C3BFBEE2C8F6A9B00F7F369 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */; };
 		7C3BFBF02C8F6A9E00F7F369 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BFBEF2C8F6A9E00F7F369 /* Assets.xcassets */; };
 		7C3BFBF32C8F6A9E00F7F369 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7C3BFBF22C8F6A9E00F7F369 /* Preview Assets.xcassets */; };
 		7C3BFBFD2C8F6A9E00F7F369 /* SubParProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFBFC2C8F6A9E00F7F369 /* SubParProjectTests.swift */; };
@@ -36,7 +36,7 @@
 /* Begin PBXFileReference section */
 		7C3BFBE82C8F6A9B00F7F369 /* SubParProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubParProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C3BFBEB2C8F6A9B00F7F369 /* SubParProjectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubParProjectApp.swift; sourceTree = "<group>"; };
-		7C3BFBED2C8F6A9B00F7F369 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7C3BFBEF2C8F6A9E00F7F369 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7C3BFBF22C8F6A9E00F7F369 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7C3BFBF82C8F6A9E00F7F369 /* SubParProjectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubParProjectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				7C3BFBEB2C8F6A9B00F7F369 /* SubParProjectApp.swift */,
-				7C3BFBED2C8F6A9B00F7F369 /* ContentView.swift */,
+				7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */,
 				7C3BFBEF2C8F6A9E00F7F369 /* Assets.xcassets */,
 				7C3BFBF12C8F6A9E00F7F369 /* Preview Content */,
 			);
@@ -257,7 +257,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C3BFBEE2C8F6A9B00F7F369 /* ContentView.swift in Sources */,
+				7C3BFBEE2C8F6A9B00F7F369 /* HomeView.swift in Sources */,
 				7C3BFBEC2C8F6A9B00F7F369 /* SubParProjectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -18,19 +18,24 @@ This Project is designed for Golfers to use as a "Pocket Caddy". Golfers will be
 
 - Stroke Counter. So that the Golfer never forgets their score
 ### Use Cases:
-1. Upload Scorecard
+1. Sign-Up for an Account.
+2. Log-In to your Account.
+3. Reset Password for your Account.
+4. Upload Scorecard for Auto-Calculation.
+5. AI-Caddy Smart Recomendation
 
-2. AI-Caddy Smart Recomendation
+6. Upload Single Stroke
 
-3. Upload Single Stroke
-
-4. Stroke Counter
+7. Stroke Counter
 
 ### Functional Requirements:
 
 ### Non-Functional Requirements:
 
 ### TODO:
+- USE CASES
+
+
 - Registration Page
 
 - Sign-Up Page
