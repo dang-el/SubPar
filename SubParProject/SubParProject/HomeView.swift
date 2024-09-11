@@ -17,7 +17,7 @@ struct Home: View {
 //            Color.init(red: 130/255, green: 1, blue: 85/255)
             
             
-            Image("golf_ball_next_to_hole").resizable()
+            Image("home_screen").resizable()
                 .scaledToFill()
                 .frame(minWidth: 0) // 👈 This will keep other views (like a large text) in the frame
                             .edgesIgnoringSafeArea(.all)
@@ -30,18 +30,20 @@ struct Home: View {
                     Text("SubPar")
                         .bold(true)
                         .font(.system(size: 48))
-                        .offset(x: 0, y: -120)
+                        .offset(x: 0, y: -275)
                 }
                 HStack(spacing: 130){
                     Button("New User", action: {
                         
                     })
+                    .foregroundColor(Color.black)
                     
                     
                     
                     Button("Returning User", action: {
                         
                     })
+                    .foregroundColor(Color.black)
                 }.offset(x:0, y:280)
                 
                 

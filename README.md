@@ -5,28 +5,23 @@
 ## Introduction
 
 ### Purpose:
-The purpose of this document is to... 
+The Purpose of this document is to illustrate the App, the ways in which the User interacts with it, and the ways that the App works "under the hood".
 
 ### Scope:
-This Project is designed for Golfers to use as a "Pocket Caddy". Golfers will be able to:
+This Project is designed for Golfers to use as a "Pocket Caddy".
 
-- Upload scorecards for auto-scoring and game saving
+ The Goals of the new System will allow Golfers to:
 
-- AI-Caddy club recomendations based on Golfers ability
-
-- Upload individual strokes to look back on and allow AI-Caddy to better assist the Golfer
-
-- Stroke Counter. So that the Golfer never forgets their score
+- Functionality to Sign-Up, Log-in, Delete, Sign-Out, And Reset Password for an Account.
+- Upload Scorecard for Auto-Calculation.
+- AI-Caddy Smart Recomendation
+- Upload Single Stroke
+- Stroke Counter
+- View Golfer History
 ### Use Cases:
-1. Sign-Up for an Account.
-2. Log-In to your Account.
-3. Reset Password for your Account.
-4. Upload Scorecard for Auto-Calculation.
-5. AI-Caddy Smart Recomendation
 
-6. Upload Single Stroke
 
-7. Stroke Counter
+
 
 ### Functional Requirements:
 

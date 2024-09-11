@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "golf_ball_next_to_hole.jpeg",
+      "filename" : "home_screen.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "golf_ball_next_to_hole 1.jpeg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "golf_ball_next_to_hole 2.jpeg",
       "idiom" : "universal",
       "scale" : "3x"
     }
