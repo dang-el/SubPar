@@ -47,6 +47,38 @@ This Application will handle:
 ### UC-1.1: Secure Sign-Up
 
 #### Summary:
+A User will be able to securely sign up for an Account.
+#### Rationale:
+Often times, a User will want to make an Account on an Application so that their information will be related to them. A User will want to have an Account for themselves where they can track their own personal improvement while keeping their personal information secure.
+#### Users:
+Any Client who wants a Golf Companion App
+#### Preconditions:
+1. Application must be installed, open, and on the Home screen.
+#### Basic Course of Events:
+1. The User will select the "Register New User" Button.
+2. The Sign-Up screen is launched.
+3. The Sign-Up screen promps the user for a username greater than 6 characters and a password greater than 8 characters containing at least one of each:
+- Lowercase character
+- Uppercase character
+- Special character
+- Number
+
+Password must not contain any of the following:
+- Comma - ,
+- Period - .
+- Space - " "
+
+4. 2FA required with email or phone number.
+5. Account details entered correctly and a new Account is registered unless an Account with the Username and Password already exists.
+#### Alternitive Paths:
+5. Account details entered incorrecly according to username/password requirements or a matching account already exists. An error is displayed and the Account requested will not be created.
+#### Postconditions:
+6. The Account is either registered in the system or the username and password will need to be changed to register the Account. (back to step 3).
+
+
+### UC-1.2: Secure Log-in
+
+#### Summary:
 
 #### Rationale:
 
@@ -58,6 +90,31 @@ This Application will handle:
 #### Postconditions:
 
 
+### UC-1.3: Secure Sign-Out
+
+#### Summary:
+
+#### Rationale:
+
+#### Users:
+
+#### Preconditions:
+#### Basic Course of Events:
+#### Alternitive Paths:
+#### Postconditions:
+
+### UC-1.1: Secure Forgot-Password
+
+#### Summary:
+
+#### Rationale:
+
+#### Users:
+
+#### Preconditions:
+#### Basic Course of Events:
+#### Alternitive Paths:
+#### Postconditions:
 
 
 ### Functional Requirements:
@@ -65,6 +122,8 @@ This Application will handle:
 ### Non-Functional Requirements:
 ### References: 
 ### TODO:
+
+
 - USE CASES
 
 
