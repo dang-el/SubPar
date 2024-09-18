@@ -38,12 +38,12 @@ struct Home: View {
                     })
                     .foregroundColor(Color.black)
                     
-                    
-                    
                     Button("Returning User", action: {
                         
                     })
                     .foregroundColor(Color.black)
+                    
+                    
                 }.offset(x:0, y:280)
                 
                 
