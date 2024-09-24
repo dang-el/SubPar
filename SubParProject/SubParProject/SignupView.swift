@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct SignupView: View {
+    //state variables to update view on change
+    @State private var username: String = ""
+    @State private var password: String = ""
+    @State private var email: String = ""
+    @State private var phoneNumber: String = ""
+    
     var body: some View {
             
         ZStack{
@@ -17,18 +23,82 @@ struct SignupView: View {
                 .edgesIgnoringSafeArea(.all)
             
             VStack{
-                Text("Sign-Up")
+                Text("Golfer Registration")
                     .font(.largeTitle)
                     
                     .fontWeight(.heavy)
             
-                    .padding(.top, 30)
-                    
-                //push content blow the title
+                    .padding(.top, 75)
                 Spacer()
-                //need input fields for the user to be able to enter a username, password, email, and or phone number. as well as a sign up button and a back button
+                VStack(spacing:20){
+                    TextField("Username", text: $username)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .frame(width: 425)
+                        .foregroundColor(Color.black)
+                    SecureField("Password", text: $password)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .frame(width: 425)
+                        .foregroundColor(Color.black)
+                    TextField("Phone Number", text: $phoneNumber)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .frame(width: 425)
+                        .foregroundColor(Color.black)
+                    TextField("Email", text: $email)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .frame(width: 425)
+                        .foregroundColor(Color.black)
+                        
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 30)
+                Spacer()
+                HStack{
+                    
+                    Button {
+                        //code here for button press
+                    } label: {
+                        Text("Cancel")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .frame(width: 100, height: 50)
+                            .background(Color.black)
+                            .foregroundColor(Color.white)
+                            .padding(.trailing, 50.0)
+                            
+                    }
+                    
+                    Button {
+                        //code here for button press
+                    } label: {
+                        Text("Register")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .frame(width: 100, height: 50)
+                            .background(Color.black)
+                            .foregroundColor(Color.white)
+                            
+                            .padding(.leading, 50.0)
+                        
+                    }
+                    
+                    
+                    
+                }
+                .padding()
+                .padding(.bottom, 30)
+                
+                
+
+                
                 
             }
+            
+            
+            
             
             
             
