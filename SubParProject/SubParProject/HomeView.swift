@@ -10,7 +10,7 @@ import SwiftUI
 struct Home: View {
     var body: some View {
         ZStack {
-            // Set the background color to green and ignore safe area
+            // Set the background color to green and ignore safe area
         //TODO: make the colors more "green-like"
             //maybe we could apply something above the background to make it look like grass or a hole maybe
             
@@ -28,9 +28,10 @@ struct Home: View {
                 VStack{
                     
                     Text("SubPar")
+                        .fontWeight(.heavy)
                         .bold(true)
-                        .font(.system(size: 48))
-                        .offset(x: 0, y: -275)
+                        .font(.largeTitle)
+                        .offset(x: 0, y: -300)
                 }
                 HStack(spacing: 130){
                     Button("New User", action: {
