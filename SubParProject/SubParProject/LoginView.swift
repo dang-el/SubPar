@@ -9,25 +9,37 @@ import SwiftUI
 
 struct LoginView: View {
     var body: some View {
-        ZStack{
-            
-            Color.init(red: 114/255, green: 238/255, blue: 125/255)
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack{
-                Text("Log-in")
-                    .font(.largeTitle)
+        NavigationView {
+            ZStack{
                 
-                    .fontWeight(.heavy)
+                Color.init(red: 114/255, green: 238/255, blue: 125/255)
+                    .scaledToFill()
+                    .edgesIgnoringSafeArea(.all)
                 
-                    .padding(.top, 30)
-                
-                //push content blow the title
-                Spacer()
-                //need username and password fields and a button
+                VStack{
+                    Text("Log-in")
+                        .font(.largeTitle)
+                    
+                        .fontWeight(.heavy)
+                    
+                        .padding(.top, 30)
+                    
+                    //push content blow the title
+                    Spacer()
+                    //need username and password fields and a button
+                    NavigationLink(destination: HomeView()) {
+                        Text("Cancel")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .padding()
+                            .foregroundColor(.black) // Button text color
+                            
+                    }
+                }
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
         
     
     }

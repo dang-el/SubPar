@@ -161,21 +161,19 @@ Either the User did not enter the correct username and email or password or the 
 ### Non-Functional Requirements:
 ### References: 
 ### TODO:
+think of languages for Back end server
+- ruby 
+- rust
+- python
+- javascript
+
+make login page
 
 
-- USE CASES
-
-
-- Registration Page
-
-- Sign-Up Page
-
-- Home Page Button need to open secondary windows when created.
+create a database to store golfers information
 ## Bugs:
 Bugs Found 0.
 
-CloudKit
 
-Firebase
 
-Back end server
+
