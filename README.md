@@ -164,16 +164,15 @@ Either the User did not enter the correct username and email or password or the 
 think of languages for Back end server
 - ruby 
 - rust
-- python
 - javascript
 
-make login page
-
+locate the whitescreen bug: see bug log
 
 create a database to store golfers information
 ## Bugs:
-Bugs Found 0.
-
+Bugs Found 1.
+1. When the navigation links are used x times the app will whitescreen. most likely a memory leak. views are probably not actually closing
+* need to find out how navigation links/views work and how to prevent this
 
 
 

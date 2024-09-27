@@ -12,10 +12,15 @@ struct LoginView: View {
         NavigationView {
             ZStack{
                 
-                LinearGradient(gradient: Gradient(colors: [Color(red: 114/255, green: 238/255, blue: 125/255), Color.blue]),
-                                               startPoint: .bottomLeading,
-                                               endPoint: .topTrailing)
-                                    .edgesIgnoringSafeArea(.all)
+                LinearGradient(gradient: Gradient(colors:
+                [Color(red: 115/255, green: 185/255, blue:115/255),
+                Color(red: 115/255, green: 175/255, blue:100/255),
+                Color(red: 115/255, green: 200/255, blue:200/255) ,
+                Color(red: 0/255, green: 200/255, blue:255/255),
+                Color(red:255/255, green:255/255, blue:165/255)]),
+                startPoint: .bottom,
+                endPoint: .topTrailing)
+                .edgesIgnoringSafeArea(.all)
                 
                 VStack{
                     Text("Log-in")
