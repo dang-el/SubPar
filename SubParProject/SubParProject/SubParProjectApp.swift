@@ -11,7 +11,14 @@ import SwiftUI
 struct SubParProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            ContentView()
         }
     }
 }
+struct ContentView: View{
+    var body: some View{
+        NavigationManagerView()
+    }
+}
+
+

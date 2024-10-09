@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SignupView: View {
+    @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var userAuth: UserAuth
     var body: some View {
         RegistrationView()
             .navigationBarBackButtonHidden(true)
@@ -19,34 +21,31 @@ struct SignupView: View {
 
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
-        SignupView()
+        NavigationManagerView()
     }
 }
 
 struct InputPanelView: View{
     //state variables to update view on change
-    @State private var username: String = ""
-    @State private var password: String = ""
-    @State private var email: String = ""
-    @State private var phoneNumber: String = ""
+    @StateObject private var viewModel = SignupViewModel()
     var body: some View{
         VStack(spacing:25){
-            TextField("Username", text: $username)
+            TextField("Username", text: $viewModel.username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
-            SecureField("Password", text: $password)
+            SecureField("Password", text: $viewModel.password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
-            TextField("Phone Number", text: $phoneNumber)
+            TextField("Phone Number", text: $viewModel.phoneNumber)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
-            TextField("Email", text: $email)
+            TextField("Email", text: $viewModel.email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
@@ -56,29 +55,34 @@ struct InputPanelView: View{
     }
 }
 
-struct ButtonPanelView: View{
+struct Signup_ButtonPanelView: View{
+    @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var userAuth: UserAuth
     var body: some View{
         HStack{
-            
-            NavigationLink(destination: HomeView()) {
+            Button {
+                navigationManager.navigate(to: .home)
+            } label: {
                 Text("Cancel")
                     .font(.title3)
                     .fontWeight(.bold)
                     .padding()
                     .foregroundColor(.black) // Button text color
-                    
             }
             .padding(.trailing, 75.0)
-            NavigationLink(destination: EmptyView()) {
+            Button {
+                navigationManager.navigate(to: .main)
+            } label: {
+
                 Text("Register")
                     .font(.title3)
                     .fontWeight(.bold)
                     .padding()
                     .foregroundColor(.black) // Button text color
                     
+                
             }
             .padding(.leading, 75.0)
-                   
         }
     }
 }
@@ -99,7 +103,7 @@ struct BackgroundGradientView: View{
 }
 struct RegistrationView: View{
     var body: some View{
-        NavigationView {
+        
             ZStack{
                 BackgroundGradientView()
                 VStack{
@@ -114,12 +118,13 @@ struct RegistrationView: View{
                     .padding(.horizontal, 20)
                     .padding(.top, 30)
                     Spacer()
-                    ButtonPanelView()
+                    Signup_ButtonPanelView()
                     .padding(.bottom, 30)
                     
                 }
                    
             }
-        }
+        
     }
 }
+

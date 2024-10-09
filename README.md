@@ -161,18 +161,15 @@ Either the User did not enter the correct username and email or password or the 
 ### Non-Functional Requirements:
 ### References: 
 ### TODO:
-think of languages for Back end server
-- ruby 
-- rust
-- javascript
+* Need to learn more about how the language works before i get more into the code
 
-locate the whitescreen bug: see bug log
+* think of languages for Back end server
+-  ruby - sinatra
+-  javascript - node
+
 
 create a database to store golfers information
 ## Bugs:
-Bugs Found 1.
-1. When the navigation links are used x times the app will whitescreen. most likely a memory leak. views are probably not actually closing
-* need to find out how navigation links/views work and how to prevent this
 
 
 
