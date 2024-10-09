@@ -21,11 +21,12 @@ struct SignupView: View {
 
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationManagerView()
+        //if you want to use the buttons you have to pass in a Navigaton Manager instead of SignupView.
+        SignupView()
     }
 }
 
-struct InputPanelView: View{
+struct Signup_InputPanelView: View{
     //state variables to update view on change
     @StateObject private var viewModel = SignupViewModel()
     var body: some View{
@@ -35,21 +36,28 @@ struct InputPanelView: View{
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
+                .autocorrectionDisabled(true)
+                .textInputAutocapitalization(.never)
             SecureField("Password", text: $viewModel.password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
+                .autocorrectionDisabled(true)
+                .textInputAutocapitalization(.never)
             TextField("Phone Number", text: $viewModel.phoneNumber)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
+                .keyboardType(.numberPad)
             TextField("Email", text: $viewModel.email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
+                .autocorrectionDisabled(true)
+                .textInputAutocapitalization(.never)
                 
         }
     }
@@ -114,7 +122,7 @@ struct RegistrationView: View{
                 
                         .padding(.top, 75)
                     Spacer()
-                    InputPanelView()
+                    Signup_InputPanelView()
                     .padding(.horizontal, 20)
                     .padding(.top, 30)
                     Spacer()

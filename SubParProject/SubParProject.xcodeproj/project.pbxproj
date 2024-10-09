@@ -16,6 +16,7 @@
 		7C3BFBFD2C8F6A9E00F7F369 /* SubParProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFBFC2C8F6A9E00F7F369 /* SubParProjectTests.swift */; };
 		7C3BFC072C8F6A9E00F7F369 /* SubParProjectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFC062C8F6A9E00F7F369 /* SubParProjectUITests.swift */; };
 		7C3BFC092C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFC082C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift */; };
+		7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */; };
 		7CFCECCB2CB60AE500359D20 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFCECCA2CB60AE500359D20 /* MainView.swift */; };
 		7CFCECCF2CB62F9C00359D20 /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFCECCE2CB62F9C00359D20 /* SignupViewModel.swift */; };
 		7CFCECD22CB633DF00359D20 /* UserAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFCECD12CB633DF00359D20 /* UserAuth.swift */; };
@@ -53,6 +54,7 @@
 		7C3BFC022C8F6A9E00F7F369 /* SubParProjectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubParProjectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C3BFC062C8F6A9E00F7F369 /* SubParProjectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubParProjectUITests.swift; sourceTree = "<group>"; };
 		7C3BFC082C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubParProjectUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7CFCECCA2CB60AE500359D20 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		7CFCECCE2CB62F9C00359D20 /* SignupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewModel.swift; sourceTree = "<group>"; };
 		7CFCECD12CB633DF00359D20 /* UserAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuth.swift; sourceTree = "<group>"; };
@@ -141,15 +143,24 @@
 			path = SubParProjectUITests;
 			sourceTree = "<group>";
 		};
+		7CE0F47B2CB6FC5500094A39 /* LoginView */ = {
+			isa = PBXGroup;
+			children = (
+				7C32472E2CA376A700A26CC7 /* LoginView.swift */,
+				7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */,
+			);
+			path = LoginView;
+			sourceTree = "<group>";
+		};
 		7CFCECCC2CB62E6400359D20 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7CE0F47B2CB6FC5500094A39 /* LoginView */,
 				7CFCECD32CB6371D00359D20 /* NavigationManagerView */,
 				7CFCECD02CB633C100359D20 /* UserAuth */,
 				7CFCECCD2CB62F6300359D20 /* SignupView */,
 				7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */,
 				7CFCECCA2CB60AE500359D20 /* MainView.swift */,
-				7C32472E2CA376A700A26CC7 /* LoginView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -318,6 +329,7 @@
 				7CFCECD52CB6373900359D20 /* NavigationManagerView.swift in Sources */,
 				7CFCECCB2CB60AE500359D20 /* MainView.swift in Sources */,
 				7C3BFBEC2C8F6A9B00F7F369 /* SubParProjectApp.swift in Sources */,
+				7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */,
 				7CFCECD22CB633DF00359D20 /* UserAuth.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

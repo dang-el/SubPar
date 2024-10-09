@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject var userAuth: UserAuth
+    
     var body: some View {
         
         ZStack{
@@ -33,6 +34,8 @@ struct LoginView: View {
                     .padding(.top, 30)
                 
                 //push content blow the title
+                Spacer()
+                Login_InputPanelView()
                 Spacer()
                 //need username and password fields and a button
                 HStack{
@@ -67,9 +70,32 @@ struct LoginView: View {
     
     }
 }
+struct Login_InputPanelView : View{
+    @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var userAuth: UserAuth
+    @StateObject private var loginViewModel = LoginViewModel()
+    var body: some View{
+        VStack(spacing: 75){
+            TextField("Username", text: $loginViewModel.username)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+                .frame(width: 400)
+                .foregroundColor(Color.black)
+                .autocorrectionDisabled(true)
+                .textInputAutocapitalization(.never)
+            SecureField("Password", text: $loginViewModel.password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+                .frame(width: 400)
+                .foregroundColor(Color.black)
+                .autocorrectionDisabled(true)
+                .textInputAutocapitalization(.never)
 
+        }
+    }
+}
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationManagerView()
+        LoginView()
     }
 }
