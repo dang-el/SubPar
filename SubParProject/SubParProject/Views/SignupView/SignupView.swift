@@ -28,9 +28,11 @@ struct SignupView_Previews: PreviewProvider {
 
 struct Signup_InputPanelView: View{
     //state variables to update view on change
-    @StateObject private var viewModel = SignupViewModel()
+    @ObservedObject var viewModel : SignupViewModel
     var body: some View{
+        
         VStack(spacing:25){
+            
             TextField("Username", text: $viewModel.username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
@@ -64,6 +66,8 @@ struct Signup_InputPanelView: View{
 }
 
 struct Signup_ButtonPanelView: View{
+    @ObservedObject var viewModel : SignupViewModel
+    
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject var userAuth: UserAuth
     var body: some View{
@@ -79,6 +83,7 @@ struct Signup_ButtonPanelView: View{
             }
             .padding(.trailing, 75.0)
             Button {
+                viewModel.registerNewAccount()
                 navigationManager.navigate(to: .main)
             } label: {
 
@@ -110,6 +115,7 @@ struct BackgroundGradientView: View{
     }
 }
 struct RegistrationView: View{
+    @StateObject var viewModel = SignupViewModel()
     var body: some View{
         
             ZStack{
@@ -122,11 +128,11 @@ struct RegistrationView: View{
                 
                         .padding(.top, 75)
                     Spacer()
-                    Signup_InputPanelView()
+                    Signup_InputPanelView(viewModel: viewModel)
                     .padding(.horizontal, 20)
                     .padding(.top, 30)
                     Spacer()
-                    Signup_ButtonPanelView()
+                    Signup_ButtonPanelView(viewModel: viewModel)
                     .padding(.bottom, 30)
                     
                 }

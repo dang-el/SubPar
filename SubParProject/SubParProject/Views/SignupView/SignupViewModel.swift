@@ -14,4 +14,8 @@ final class SignupViewModel: ObservableObject{
     @Published var password: String = ""
     @Published var email: String = ""
     @Published var phoneNumber: String = ""
+    
+    func registerNewAccount(){
+        print("Registering account for User: \(self.username) \(self.password) \(self.email) \(self.phoneNumber)")
+    }
 }
