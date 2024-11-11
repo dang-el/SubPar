@@ -1,27 +1,54 @@
-'use strict'
+'use strict' 
+ 
+const express = require('express'); 
+const morgan = require('morgan'); 
+ 
+const app = express(); 
+ 
+app.use(morgan('dev')); 
+app.use(express.json())
 
-const http = require('http');
+app.post('/register', (req, res) => {
+    const data = req.body
+    console.log('Recieved Data:', data)
+    register_new_golfer(data.username, data.password, data.email, data.phone_number, res)
+})
 
-const server = http.createServer((req, res) => {
-    //ESTABLISH SERVER ROUTES
-    console.log(`the requested URL is: ${req.url}`)
-    console.log(`The host address is ${req.headers.host}`); 
-    console.log(`The HTTP method used is ${req.method}`); 
+app.use((req, res) => { 
+    res.status(404).send(`<h2>Uh Oh!</h2><p>Sorry ${req.url} cannot be found here</p>`); 
+}); 
 
-    res.writeHead(200, {'Content-Type': 'text/html'}); 
-    res.end(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hello World</title>
-</head>
-<body>
-    <h1>Hello, World!</h1>
-</body>
-</html>`)
-    
-});
+ 
+app.listen(6000, () => console.log('The server is up and running...'));
 
+function register_new_golfer(username, password, email, phone_number, res){
+    console.log("PROCEESSING GOLFER INFORMATION", username, password, email, phone_number)
+    if (check_valid_user(username, password, email, phone_number)){
+        return add_user_to_db(null, username, password, email, phone_number, res)
+    }
+    else res.status(422).json({ error: "Data failed validation" });
 
-
-server.listen(60000, () => console.log('The server is up an running...'))
+}
+function check_valid_user(username, password, email, phone_number){
+    return (check_username(username) && check_password(password) && check_email(email) && check_phone(phone_number))
+}
+function check_username(username){
+    return false
+}
+function check_password(password){
+    return false
+}
+function check_email(email){
+    return false
+}
+function check_phone(phone_number){
+    return false
+}
+function add_user_to_db(db, username, password, email, phone_number, res){
+    // return a http response
+    const user_was_added_to_database = false
+    if (user_was_added_to_database){
+        return res.status(201).json({ message: "User created successfully"})
+    }
+    else return res.status(409).json({ error: "Duplicate entry" })
+}
