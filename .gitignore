@@ -60,5 +60,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
-references/SubParDB.db
+SubParDB.db
 package-lock.json
