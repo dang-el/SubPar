@@ -2,11 +2,21 @@
  
 const express = require('express'); 
 const morgan = require('morgan'); 
- 
+const sqlite3 = require('sqlite3').verbose();
+
 const app = express(); 
  
 app.use(morgan('dev')); 
 app.use(express.json())
+
+const db_conn = new sqlite3.Database('../references/SubParDB.db', (err) => {
+    if (err) {
+        console.error("Error connecting to the database:", err.message);
+    } else {
+        console.log('Connected to the SQLite database.');
+    }
+});
+
 
 app.post('/register', (req, res) => {
     const data = req.body
