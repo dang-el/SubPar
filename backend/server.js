@@ -37,7 +37,12 @@ function check_username(username){
         return false
     }
     if (username.length >=6 ){
-        return check_str_for_invalid_chars(username)
+ 
+        if (check_str_for_invalid_chars(username)){
+            console.log("username good")
+            return true
+        }
+        else return false
     }
     else return false
     
@@ -46,6 +51,7 @@ function check_password(password){
     if(checkIfString(password)){
         if (password.length >= 8){
             if(is_password_valid(password)){
+                console.log("password good")
                 return true
             } 
             else return false
@@ -55,10 +61,10 @@ function check_password(password){
     
 }
 function check_email(email){
-    return false
+    return validateEmail(email)
 }
 function check_phone(phone_number){
-    return false
+    return validatePhoneNumber(phone_number)
 }
 function add_user_to_db(db, username, password, email, phone_number, res){
     // return a http response
@@ -109,6 +115,20 @@ function is_password_valid(string){
         }
     }
     return (number_present && lowercase_present && uppercase_present && symbol_present);
+}
+function validateEmail(email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+}
+function validatePhoneNumber(phone) {
+    // Regular expression for common formats:
+    // - (123) 456-7890
+    // - 123-456-7890
+    // - 123.456.7890
+    // - 1234567890
+    // - +31636363634 (international)
+    const phonePattern = /^(\+?\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+    return phonePattern.test(phone);
 }
 function encrypt_password(password){
     //need to actually enctypt this
