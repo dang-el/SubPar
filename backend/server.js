@@ -1,5 +1,6 @@
 'use strict' 
  
+const e = require('express');
 const express = require('express'); 
 const morgan = require('morgan'); 
 const sqlite3 = require('sqlite3').verbose();
@@ -34,7 +35,7 @@ app.listen(6000, () => console.log('The server is up and running...'));
 function register_new_golfer(username, password, email, phone_number, res){
     console.log("PROCEESSING GOLFER INFORMATION", username, password, email, phone_number)
     if (check_valid_user(username, password, email, phone_number)){
-        return add_user_to_db(null, username, encrypt_password(password), email, phone_number, res)
+        return add_user_to_db(username, encrypt_password(password), email, phone_number, res)
     }
     else res.status(422).json({ error: "Data failed validation" });
 
@@ -76,13 +77,50 @@ function check_email(email){
 function check_phone(phone_number){
     return validatePhoneNumber(phone_number)
 }
-function add_user_to_db(db, username, password, email, phone_number, res){
-    // return a http response
-    const user_was_added_to_database = false
-    if (user_was_added_to_database){
-        return res.status(201).json ({ message: "User created successfully"})
-    }
-    else return res.status(409).json({ error: "Duplicate entry" })
+
+function check_if_username_present(username, callback){
+
+    db_conn.get("SELECT * FROM Golfers WHERE Golfers.Username = ?", [username], (err, row) => {
+        if (err) {
+            console.error("Error checking username:", err.message);
+            callback(err, null);  // Return error to callback
+            return;
+        }
+        console.log("Query result row:", row);
+        if (row) {
+            // If row is found, the username exists
+            callback(null, true);  // Pass 'true' to indicate the username exists
+        } else {
+            // If no row is found, the username is available
+            callback(null, false);  // Pass 'false' to indicate the username is available
+        }
+
+    })
+}
+function add_user_to_db(username, password, email, phone_number, res, callback){
+    //check if the username is present in the database
+
+    check_if_username_present(username, (err, exists) =>{
+        if(err) {
+            console.error("An error occurred:", err);
+            return res.status(500).json({ error: "INTERNAL SERVER ERROR"})
+        } else {
+            if (exists) {
+                console.log("Username already taken.");
+                return res.status(409).json({message : `USER ALREADY EXISTS WITH USERNAME ${username}`})
+            } else {
+                console.log("Username is available for use.");
+                
+                //run insert query 
+                db_conn.run(`INSERT INTO Golfers (Username, Password, Email, Phone_number ) VALUES ( ?, ?, ?, ?)`,[username, password, email, phone_number], function(err) {
+                    if (err) return console.error('Error inserting user:', err.message);
+                    console.log(`User added with ID: ${this.lastID}`);
+                    return res.status(201).json({message : "DATABASE SUCESSFULLY MODIFIED", golfer_id: "undefined"})
+                } )
+                
+            }
+        }
+    })
 }
 function checkIfString(param) {
     return typeof param === 'string';
