@@ -18,9 +18,46 @@ const db_conn = new sqlite3.Database('../references/SubParDB.db', (err) => {
     }
 });
 
+app.post('/sign-in', (req, res) =>{
+    const data = req.body
+    if (!data.username || typeof data.username !== 'string') {
+        return res.status(400).json({ error: "Invalid or missing 'username' in request body" });
+    }
+    if (!data.password || typeof data.password !== 'string') {
+        return res.status(400).json({ error: "Invalid or missing 'password' in request body" });
+    }
+    console.log(data)
+    if(check_username(data.username) && check_password(data.password)){
+        return sign_in_user(data.username, data.password, res )
+    }
+})
+
+function sign_in_user(username, password, res) {
+    console.log("signing in", username, password);
+    // Check if the user is present in the database
+    db_conn.get(`
+        SELECT Golfer_ID
+        FROM Golfers
+        WHERE Golfers.Username = ?
+        AND Golfers.Password = ?
+    `, [username, password], (err, row) => {
+        if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
+        if (row)  return res.status(200).json({ message: "Successful Sign-in", golfer_ID: row.Golfer_ID });
+        else return res.status(404).json({ message: `No user exists with username: ${username} and password ${password}` });
+    });
+}
 
 app.post('/register', (req, res) => {
     const data = req.body
+    if (!data.username || typeof data.username !== 'string') {
+        return res.status(400).json({ error: "Invalid or missing 'username' in request body" });
+    }
+    if (!data.password || typeof data.password !== 'string') {
+        return res.status(400).json({ error: "Invalid or missing 'password' in request body" });
+    }
+    if(!(data.email || data.phone_number)){
+        return res.status(400).json({ error: "Missing 'email or phone number' in request body" });
+    }
     console.log('Recieved Data:', data)
     return register_new_golfer(data.username, data.password, data.email, data.phone_number, res)
 })
@@ -41,30 +78,20 @@ function register_new_golfer(username, password, email, phone_number, res){
 
 }
 function check_valid_user(username, password, email, phone_number){
-    return (check_username(username) && check_password(password) && check_email(email) && check_phone(phone_number))
+    return (check_username(username) && check_password(password) && (check_email(email) || check_phone(phone_number)))
 }
 function check_username(username){
-    if (!checkIfString(username)){
-        return false
-    }
+    if (!checkIfString(username)) return false
     if (username.length >=6 ){
- 
-        if (check_str_for_invalid_chars(username)){
-            console.log("username good")
-            return true
-        }
+        if (check_str_for_invalid_chars(username)) return true
         else return false
     }
     else return false
-    
 }
 function check_password(password){
     if(checkIfString(password)){
         if (password.length >= 8){
-            if(is_password_valid(password)){
-                console.log("password good")
-                return true
-            } 
+            if(is_password_valid(password)) return true
             else return false
         }
     }
@@ -97,7 +124,7 @@ function check_if_username_present(username, callback){
 
     })
 }
-function add_user_to_db(username, password, email, phone_number, res, callback){
+function add_user_to_db(username, password, email, phone_number, res){
     //check if the username is present in the database
 
     check_if_username_present(username, (err, exists) =>{
