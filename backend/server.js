@@ -3,6 +3,7 @@
 const e = require('express');
 const express = require('express'); 
 const morgan = require('morgan'); 
+const bcrypt = require('bcrypt');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express(); 
@@ -34,17 +35,36 @@ app.post('/sign-in', (req, res) =>{
 
 function sign_in_user(username, password, res) {
     console.log("signing in", username, password);
+
     // Check if the user is present in the database
     db_conn.get(`
-        SELECT Golfer_ID
-        FROM Golfers
+        SELECT Golfers.Password 
+        FROM Golfers 
         WHERE Golfers.Username = ?
-        AND Golfers.Password = ?
-    `, [username, password], (err, row) => {
-        if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
-        if (row)  return res.status(200).json({ message: "Successful Sign-in", golfer_ID: row.Golfer_ID });
-        else return res.status(404).json({ message: `No user exists with username: ${username} and password ${password}` });
-    });
+        `, [username], (err, row) =>{
+            if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
+            if (row) {
+                console.log(JSON.stringify(row, null, 2))
+                const hashed_password = row.Password
+                if(validatePassword(password, hashed_password)){
+                    console.log
+                    db_conn.get(`
+                        SELECT Golfer_ID
+                        FROM Golfers
+                        WHERE Golfers.Username = ?
+                        AND Golfers.Password = ?
+                    `, [username, hashed_password], (err, row) => {
+                        if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
+                        if (row)  return res.status(200).json({ message: "Successful Sign-in", golfer_ID: row.Golfer_ID });
+                        else return res.status(404).json({ message: `No user exists with username: ${username} and password ${password}` });
+                    });
+                }
+            }
+            else return res.status(404).json({message: "Error, Query returned no rows"})
+        })
+
+
+    
 }
 
 app.post('/register', (req, res) => {
@@ -69,13 +89,20 @@ app.use((req, res) => {
  
 app.listen(6000, () => console.log('The server is up and running...'));
 
-function register_new_golfer(username, password, email, phone_number, res){
-    console.log("PROCEESSING GOLFER INFORMATION", username, password, email, phone_number)
-    if (check_valid_user(username, password, email, phone_number)){
-        return add_user_to_db(username, encrypt_password(password), email, phone_number, res)
-    }
-    else res.status(422).json({ error: "Data failed validation" });
+async function register_new_golfer(username, password, email, phone_number, res) {
+    console.log("PROCEESSING GOLFER INFORMATION", username, password, email, phone_number);
 
+    if (check_valid_user(username, password, email, phone_number)) {
+        try {
+            const hashedPassword = await encrypt_password(password); // Await here
+            return add_user_to_db(username, hashedPassword, email, phone_number, res);
+        } catch (error) {
+            console.error("Error hashing password:", error);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    } else {
+        res.status(422).json({ error: "Data failed validation" });
+    }
 }
 function check_valid_user(username, password, email, phone_number){
     return (check_username(username) && check_password(password) && (check_email(email) || check_phone(phone_number)))
@@ -207,5 +234,16 @@ function validatePhoneNumber(phone) {
 }
 function encrypt_password(password){
     //need to actually enctypt this
-    return password
+    return hashPassword(password)
+}
+async function hashPassword(password) {
+    // 10 is the salt rounds, which defines the strength of the hashing
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(password, saltRounds);
+    return hash;
+}
+
+async function validatePassword(inputPassword, storedHash) {
+    const isMatch = await bcrypt.compare(inputPassword, storedHash);
+    return isMatch;
 }
