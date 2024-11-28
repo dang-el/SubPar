@@ -1,6 +1,5 @@
 'use strict' 
  
-const e = require('express');
 const express = require('express'); 
 const morgan = require('morgan'); 
 const bcrypt = require('bcrypt');
@@ -10,6 +9,8 @@ const app = express();
  
 app.use(morgan('dev')); 
 app.use(express.json())
+
+app.listen(6000, () => console.log('The server is up and running...'));
 
 const db_conn = new sqlite3.Database('../references/SubParDB.db', (err) => {
     if (err) {
@@ -47,7 +48,6 @@ function sign_in_user(username, password, res) {
                 console.log(JSON.stringify(row, null, 2))
                 const hashed_password = row.Password
                 if(validatePassword(password, hashed_password)){
-                    console.log
                     db_conn.get(`
                         SELECT Golfer_ID
                         FROM Golfers
@@ -87,7 +87,7 @@ app.use((req, res) => {
 }); 
 
  
-app.listen(6000, () => console.log('The server is up and running...'));
+
 
 async function register_new_golfer(username, password, email, phone_number, res) {
     console.log("PROCEESSING GOLFER INFORMATION", username, password, email, phone_number);
@@ -169,13 +169,15 @@ function add_user_to_db(username, password, email, phone_number, res){
                 db_conn.run(`INSERT INTO Golfers (Username, Password, Email, Phone_number ) VALUES ( ?, ?, ?, ?)`,[username, password, email, phone_number], function(err) {
                     if (err) return console.error('Error inserting user:', err.message);
                     console.log(`User added with ID: ${this.lastID}`);
-                    return res.status(201).json({message : "DATABASE SUCESSFULLY MODIFIED", golfer_id: "undefined"})
+                    //get the golfers if that was just registered
+                    return res.status(201).json({message : "DATABASE SUCESSFULLY MODIFIED", golfer_id: this.lastID})
                 } )
                 
             }
         }
     })
 }
+
 function checkIfString(param) {
     return typeof param === 'string';
 }
