@@ -16,7 +16,7 @@ struct SignupView: View {
             .navigationBarHidden(true)
         
     }
-        
+    
 }
 
 struct SignupView_Previews: PreviewProvider {
@@ -60,7 +60,7 @@ struct Signup_InputPanelView: View{
                 .foregroundColor(Color.black)
                 .autocorrectionDisabled(true)
                 .textInputAutocapitalization(.never)
-                
+            
         }
     }
 }
@@ -83,16 +83,23 @@ struct Signup_ButtonPanelView: View{
             }
             .padding(.trailing, 75.0)
             Button {
-                viewModel.registerNewAccount()
-                navigationManager.navigate(to: .main)
+                Task {
+                    do {
+                        let userID = try await viewModel.registerNewAccount()
+                        print("Registration successful, Golfer_ID: \(userID)")
+                        navigationManager.navigate(to: .main)
+                    } catch {
+                        print("Error registering account: \(error.localizedDescription)")
+                    }
+                }
             } label: {
-
+                
                 Text("Register")
                     .font(.title3)
                     .fontWeight(.bold)
                     .padding()
                     .foregroundColor(.black) // Button text color
-                    
+                
                 
             }
             .padding(.leading, 75.0)
@@ -103,41 +110,41 @@ struct BackgroundGradientView: View{
     var body: some View{
         //114 238 114
         LinearGradient(gradient: Gradient(colors:
-        [Color(red: 115/255, green: 185/255, blue:115/255),
-        Color(red: 115/255, green: 175/255, blue:100/255),
-        Color(red: 115/255, green: 200/255, blue:200/255) ,
-        Color(red: 0/255, green: 200/255, blue:255/255),
-        Color(red:255/255, green:255/255, blue:165/255)]),
-        startPoint: .bottom,
-        endPoint: .topTrailing)
+                                            [Color(red: 115/255, green: 185/255, blue:115/255),
+                                             Color(red: 115/255, green: 175/255, blue:100/255),
+                                             Color(red: 115/255, green: 200/255, blue:200/255) ,
+                                             Color(red: 0/255, green: 200/255, blue:255/255),
+                                             Color(red:255/255, green:255/255, blue:165/255)]),
+                       startPoint: .bottom,
+                       endPoint: .topTrailing)
         .edgesIgnoringSafeArea(.all)
-
+        
     }
 }
 struct RegistrationView: View{
     @StateObject var viewModel = SignupViewModel()
     var body: some View{
         
-            ZStack{
-                BackgroundGradientView()
-                VStack{
-                    Text("Golfer Registration")
-                        .font(.largeTitle)
-                        
-                        .fontWeight(.heavy)
+        ZStack{
+            BackgroundGradientView()
+            VStack{
+                Text("Golfer Registration")
+                    .font(.largeTitle)
                 
-                        .padding(.top, 75)
-                    Spacer()
-                    Signup_InputPanelView(viewModel: viewModel)
+                    .fontWeight(.heavy)
+                
+                    .padding(.top, 75)
+                Spacer()
+                Signup_InputPanelView(viewModel: viewModel)
                     .padding(.horizontal, 20)
                     .padding(.top, 30)
-                    Spacer()
-                    Signup_ButtonPanelView(viewModel: viewModel)
+                Spacer()
+                Signup_ButtonPanelView(viewModel: viewModel)
                     .padding(.bottom, 30)
-                    
-                }
-                   
+                
             }
+            
+        }
         
     }
 }

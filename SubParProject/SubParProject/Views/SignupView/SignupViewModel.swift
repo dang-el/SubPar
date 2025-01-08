@@ -4,70 +4,59 @@
 //
 //  Created by Owen Dangel on 10/8/24.
 //
-
 import Foundation
-final class SignupViewModel: ObservableObject{
+
+final class SignupViewModel: ObservableObject {
     
+    struct RegistrationResponse: Codable {
+            let message: String
+            let golfer_id: Int
+        }
     
-    //@Published will cause the view to update since the var is being observed for changes
     @Published var username: String = ""
     @Published var password: String = ""
     @Published var email: String = ""
     @Published var phoneNumber: String = ""
     
-    func registerNewAccount(){
+    func registerNewAccount() async throws -> Int {
         print("Registering account for User: \(self.username) \(self.password) \(self.email) \(self.phoneNumber)")
-        let response = sendRegisterPostRequest()
-        return response
+        return try await sendRegisterPostRequest()
     }
     
-    func sendRegisterPostRequest(){
+    func sendRegisterPostRequest() async throws -> Int {
         guard let url = URL(string: "http://127.0.0.1:6000/register") else {
-            print("server down or invalid url")
-            return
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
         }
-        // make json body data - take from @published vars
         
         let jsonBody: [String: Any] = [
-            "username" : username,
-            "password" : password,
-            "email" : email,
+            "username": username,
+            "password": password,
+            "email": email,
             "phone_number": phoneNumber
         ]
-        //serialize
+        
         guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonBody, options: []) else {
-            print("Error serializing json data")
-            return
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error serializing JSON"])
         }
-        //create the actual request
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
-        //the http request has been filled out correctly with the data that is needed to be in it
-        // 5. Send the request using URLSession
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                // Handle errors
-                if let error = error {
-                    print("Error: \(error.localizedDescription)")
-                    return
-                }
-                
-                // Handle response
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("HTTP Status Code: \(httpResponse.statusCode)")
-                }
-                
-                // Parse response data if any
-                if let data = data,
-                   let responseString = String(data: data, encoding: .utf8) {
-                    print("Response Data: \(responseString)")
-                    
-                }
-                
-            }
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Check HTTP response
+        if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+            let errorMessage = HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode)
+            throw NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+        }
+        
+        // Decode the JSON response
+            let decoder = JSONDecoder()
+            let registrationResponse = try decoder.decode(RegistrationResponse.self, from: data)
             
-            // 6. Start the network task
-            task.resume()
+            // Return the extracted ID
+            return registrationResponse.golfer_id
     }
 }
