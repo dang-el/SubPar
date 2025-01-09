@@ -19,53 +19,62 @@ const db_conn = new sqlite3.Database('../references/SubParDB.db', (err) => {
         console.log('Connected to the SQLite database.');
     }
 });
+app.post('/sign-in', (req, res) => {
+    const data = req.body;
+    
+    // Early validation for username and password
+    if (!data.username || typeof data.username !== 'string' || !check_username(data.username)) {
+        return res.status(400).json({ error: "Invalid username" });
+    }
+    if (!data.password || typeof data.password !== 'string' || !check_password(data.password)) {
+        return res.status(400).json({ error: "Invalid password" });
+    }
 
-app.post('/sign-in', (req, res) =>{
-    const data = req.body
-    if (!data.username || typeof data.username !== 'string') {
-        return res.status(400).json({ error: "Invalid or missing 'username' in request body" });
-    }
-    if (!data.password || typeof data.password !== 'string') {
-        return res.status(400).json({ error: "Invalid or missing 'password' in request body" });
-    }
-    console.log(data)
-    if(check_username(data.username) && check_password(data.password)){
-        return sign_in_user(data.username, data.password, res )
-    }
-})
+    console.log(data);
+    
+    return sign_in_user(data.username, data.password, res);
+});
 
-function sign_in_user(username, password, res) {
+async function sign_in_user(username, password, res) {
     console.log("signing in", username, password);
 
-    // Check if the user is present in the database
     db_conn.get(`
-        SELECT Golfers.Password 
+        SELECT Password
         FROM Golfers 
-        WHERE Golfers.Username = ?
-        `, [username], (err, row) =>{
-            if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
-            if (row) {
-                console.log(JSON.stringify(row, null, 2))
-                const hashed_password = row.Password
-                if(validatePassword(password, hashed_password)){
-                    db_conn.get(`
-                        SELECT Golfer_ID
-                        FROM Golfers
-                        WHERE Golfers.Username = ?
-                        AND Golfers.Password = ?
-                    `, [username, hashed_password], (err, row) => {
-                        if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
-                        if (row)  return res.status(200).json({ message: "Successful Sign-in", golfer_ID: row.Golfer_ID });
-                        else return res.status(404).json({ message: `No user exists with username: ${username} and password ${password}` });
-                    });
-                }
+        WHERE Username = ?
+    `, [username], async (err, row) => {
+        if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
+
+        if (row) {
+            const storedHash = row.Password;  // Get the stored bcrypt hash from DB
+
+            // Compare the input password with the stored hash using bcrypt
+            const isPasswordValid = await bcrypt.compare(password, storedHash);
+            console.log("Password Match:", isPasswordValid); // Should print 'false' for incorrect passwords
+
+            if (isPasswordValid) {
+                db_conn.get(`
+                    SELECT Golfer_ID
+                    FROM Golfers
+                    WHERE Username = ?
+                `, [username], (err, row) => {
+                    if (err) return res.status(500).json({ error: "Internal server error", message: `${err.message}` });
+                    if (row) {
+                        return res.status(200).json({ message: "Successful Sign-in", golfer_id: row.Golfer_ID });
+                    } else {
+                        return res.status(404).json({ message: `No user exists with username: ${username}` });
+                    }
+                });
+            } else {
+                return res.status(401).json({ message: "Incorrect password" });
             }
-            else return res.status(404).json({message: "Error, Query returned no rows"})
-        })
-
-
-    
+        } else {
+            return res.status(404).json({ message: "Username not found" });
+        }
+    });
 }
+
+
 
 app.post('/register', (req, res) => {
     const data = req.body
@@ -243,9 +252,4 @@ async function hashPassword(password) {
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
     return hash;
-}
-
-async function validatePassword(inputPassword, storedHash) {
-    const isMatch = await bcrypt.compare(inputPassword, storedHash);
-    return isMatch;
 }

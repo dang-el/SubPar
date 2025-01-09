@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    @StateObject var viewModel = LoginViewModel()
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject var userAuth: UserAuth
     
@@ -35,30 +36,10 @@ struct LoginView: View {
                 
                 //push content blow the title
                 Spacer()
-                Login_InputPanelView()
+                Login_InputPanelView(viewModel: viewModel)
                 Spacer()
                 //need username and password fields and a button
-                HStack{
-                    Button {
-                        navigationManager.navigate(to: .home)
-                    } label: {
-                        Text("Cancel")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .padding()
-                            .foregroundColor(.black) // Button text color
-                    }
-                    Spacer()
-                    Button {
-                        navigationManager.navigate(to: .main)
-                    } label: {
-                        Text("Log-In")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .padding()
-                            .foregroundColor(.black) // Button text color
-                    }
-                }
+                Login_ButtonPanelView(viewModel: viewModel)
                 
 
                 
@@ -70,20 +51,69 @@ struct LoginView: View {
     
     }
 }
+struct Login_ButtonPanelView : View{
+    @ObservedObject var viewModel : LoginViewModel
+    
+    @EnvironmentObject var navigationManager: NavigationManager
+    @EnvironmentObject var userAuth: UserAuth
+    var body: some View{
+        HStack{
+            Button {
+                navigationManager.navigate(to: .home)
+            } label: {
+                Text("Cancel")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .padding()
+                    .foregroundColor(.black) // Button text color
+            }
+            Spacer()
+            Button {
+                Task{
+                    do {
+                        let userID = try await viewModel.sign_in()
+                        print("Sign_In successful, Golfer_ID: \(userID)")
+                        navigationManager.navigate(to: .main)
+                    }
+                    catch{
+                        print("Error signing in")
+                    }
+                    /*
+                     do {
+                         let userID = try await viewModel.registerNewAccount()
+                         print("Registration successful, Golfer_ID: \(userID)")
+                         navigationManager.navigate(to: .main)
+                     } catch {
+                         print("Error registering account: \(error.localizedDescription)")
+                     }
+                 }
+                     */
+                }
+                
+            } label: {
+                Text("Log-In")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .padding()
+                    .foregroundColor(.black) // Button text color
+            }
+        }
+    }
+}
 struct Login_InputPanelView : View{
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject var userAuth: UserAuth
-    @StateObject private var loginViewModel = LoginViewModel()
+    @ObservedObject var viewModel : LoginViewModel
     var body: some View{
         VStack(spacing: 75){
-            TextField("Username", text: $loginViewModel.username)
+            TextField("Username", text: $viewModel.username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
                 .foregroundColor(Color.black)
                 .autocorrectionDisabled(true)
                 .textInputAutocapitalization(.never)
-            SecureField("Password", text: $loginViewModel.password)
+            SecureField("Password", text: $viewModel.password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .frame(width: 400)
