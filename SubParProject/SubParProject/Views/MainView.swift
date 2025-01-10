@@ -14,7 +14,9 @@ struct MainView: View {
         ZStack{
             Main_View_Gradient()
             VStack{
-                Text("Main View")
+                Text("SubPar")
+                    .font(.title)
+                    .fontWeight(.bold)
                 HStack{
                     Button {
                         print("Button clicked... CURRENT LOGGED IN USER_ID: \(userAuth.get_userID() ?? -1)")
@@ -36,6 +38,49 @@ struct MainView: View {
                     }
                     
                     
+                }
+                Spacer()
+                Text("RECENTLY PLAYED COURSES")
+                    .fontWeight(.bold)
+                // Scrollable Content... need to replace at a later date with num couses visited by user
+                               ScrollView {
+                                   let num = 20
+                                   VStack(spacing: 20) {
+                                       ForEach(1...num, id: \.self) { index in
+                                           Text("Dummy Content Item \(index)")
+                                               .frame(maxWidth: .infinity)
+                                               .padding()
+                                               .background(Color.white)
+                                               .cornerRadius(10)
+                                               .shadow(radius: 5)
+                                               .padding(.horizontal)
+                                       }
+                                   }
+                               }
+                               .padding(.vertical)
+                Spacer()
+                HStack(spacing: 40){
+                    Button {
+                        print("Stroke Counter")
+                    } label: {
+                        Text("Stroke Counter")
+                    }
+                    Button {
+                        print("Stroke History")
+                    } label: {
+                        Text("Stroke History")
+                    }
+                    Button {
+                        print("Upload Scorecard")
+                    } label: {
+                        Text("Upload Scorecard")
+                    }
+                    Button {
+                        print("Social")
+                    } label: {
+                        Text("Social")
+                    }
+
                 }
                 Spacer()
                 Button {
