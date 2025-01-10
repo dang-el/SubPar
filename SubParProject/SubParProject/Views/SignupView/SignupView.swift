@@ -87,6 +87,7 @@ struct Signup_ButtonPanelView: View{
                     do {
                         let userID = try await viewModel.registerNewAccount()
                         print("Registration successful, Golfer_ID: \(userID)")
+                        userAuth.log_in_user(userID: userID)
                         navigationManager.navigate(to: .main)
                     } catch {
                         print("Error registering account: \(error.localizedDescription)")

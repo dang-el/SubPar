@@ -17,7 +17,7 @@ struct MainView: View {
                 Text("Main View")
                 HStack{
                     Button {
-                        print("Button clicked")
+                        print("Button clicked... CURRENT LOGGED IN USER_ID: \(userAuth.get_userID() ?? -1)")
                     } label: {
                         Image("golf_ball_icon")
                             .resizable()  // Makes the image resizable
