@@ -164,6 +164,14 @@
 			path = SubParProjectUITests;
 			sourceTree = "<group>";
 		};
+		7C6B0FB52D33BB9E00442195 /* HomeView */ = {
+			isa = PBXGroup;
+			children = (
+				7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */,
+			);
+			path = HomeView;
+			sourceTree = "<group>";
+		};
 		7C6D71A72D32349C0090B5AA /* New Group */ = {
 			isa = PBXGroup;
 			children = (
@@ -183,12 +191,12 @@
 		7CFCECCC2CB62E6400359D20 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7C6B0FB52D33BB9E00442195 /* HomeView */,
 				7C16DAB52D3235CD0097BFDB /* MainViews */,
 				7CE0F47B2CB6FC5500094A39 /* LoginView */,
 				7CFCECD32CB6371D00359D20 /* NavigationManagerView */,
 				7CFCECD02CB633C100359D20 /* UserAuth */,
 				7CFCECCD2CB62F6300359D20 /* SignupView */,
-				7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
