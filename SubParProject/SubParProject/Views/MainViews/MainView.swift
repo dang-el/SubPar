@@ -99,6 +99,7 @@ struct MainView: View {
                 switch destination {
                 case "StrokeCounterView":
                     StrokeCounterView(navigationPath: $navigationPath)
+                        .environmentObject(userAuth)
                 case "StrokeHistoryView":
                     StrokeHistoryView(navigationPath: $navigationPath)
                 case "UploadScorecardView":

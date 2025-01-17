@@ -20,6 +20,9 @@
 		7C3BFBFD2C8F6A9E00F7F369 /* SubParProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFBFC2C8F6A9E00F7F369 /* SubParProjectTests.swift */; };
 		7C3BFC072C8F6A9E00F7F369 /* SubParProjectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFC062C8F6A9E00F7F369 /* SubParProjectUITests.swift */; };
 		7C3BFC092C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BFC082C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift */; };
+		7C456C0A2D34CACE00F170BF /* StrokeCounterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */; };
+		7C456C0D2D34CEB000F170BF /* RecordStrokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */; };
+		7C456C0F2D34DE1C00F170BF /* RecordStrokeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */; };
 		7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */; };
 		7CFCECCB2CB60AE500359D20 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFCECCA2CB60AE500359D20 /* MainView.swift */; };
 		7CFCECCF2CB62F9C00359D20 /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFCECCE2CB62F9C00359D20 /* SignupViewModel.swift */; };
@@ -62,6 +65,9 @@
 		7C3BFC022C8F6A9E00F7F369 /* SubParProjectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubParProjectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C3BFC062C8F6A9E00F7F369 /* SubParProjectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubParProjectUITests.swift; sourceTree = "<group>"; };
 		7C3BFC082C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubParProjectUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeCounterViewModel.swift; sourceTree = "<group>"; };
+		7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordStrokeView.swift; sourceTree = "<group>"; };
+		7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordStrokeViewModel.swift; sourceTree = "<group>"; };
 		7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7CFCECCA2CB60AE500359D20 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		7CFCECCE2CB62F9C00359D20 /* SignupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewModel.swift; sourceTree = "<group>"; };
@@ -98,8 +104,8 @@
 		7C16DAB52D3235CD0097BFDB /* MainViews */ = {
 			isa = PBXGroup;
 			children = (
+				7C456C082D34CAAE00F170BF /* StrokeCounter */,
 				7CFCECCA2CB60AE500359D20 /* MainView.swift */,
-				7C16DAB62D3236160097BFDB /* StrokeCounterView.swift */,
 				7C16DAB82D3236330097BFDB /* StrokeHistoryView.swift */,
 				7C16DABB2D3236630097BFDB /* UploadScorecardView.swift */,
 				7C16DABE2D3236840097BFDB /* SocialView.swift */,
@@ -162,6 +168,25 @@
 				7C3BFC082C8F6A9E00F7F369 /* SubParProjectUITestsLaunchTests.swift */,
 			);
 			path = SubParProjectUITests;
+			sourceTree = "<group>";
+		};
+		7C456C082D34CAAE00F170BF /* StrokeCounter */ = {
+			isa = PBXGroup;
+			children = (
+				7C456C0B2D34CE9200F170BF /* RecordStroke */,
+				7C16DAB62D3236160097BFDB /* StrokeCounterView.swift */,
+				7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */,
+			);
+			path = StrokeCounter;
+			sourceTree = "<group>";
+		};
+		7C456C0B2D34CE9200F170BF /* RecordStroke */ = {
+			isa = PBXGroup;
+			children = (
+				7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */,
+				7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */,
+			);
+			path = RecordStroke;
 			sourceTree = "<group>";
 		};
 		7C6B0FB52D33BB9E00442195 /* HomeView */ = {
@@ -360,15 +385,18 @@
 				7CFCECD72CB6375000359D20 /* NavigationManagerViewModel.swift in Sources */,
 				7CFCECCF2CB62F9C00359D20 /* SignupViewModel.swift in Sources */,
 				7C32472D2CA36DAE00A26CC7 /* SignupView.swift in Sources */,
+				7C456C0D2D34CEB000F170BF /* RecordStrokeView.swift in Sources */,
 				7C3BFBEE2C8F6A9B00F7F369 /* HomeView.swift in Sources */,
 				7C32472F2CA376A700A26CC7 /* LoginView.swift in Sources */,
 				7CFCECD52CB6373900359D20 /* NavigationManagerView.swift in Sources */,
+				7C456C0F2D34DE1C00F170BF /* RecordStrokeViewModel.swift in Sources */,
 				7CFCECCB2CB60AE500359D20 /* MainView.swift in Sources */,
 				7C16DAB92D3236330097BFDB /* StrokeHistoryView.swift in Sources */,
 				7C3BFBEC2C8F6A9B00F7F369 /* SubParProjectApp.swift in Sources */,
 				7C16DAB72D3236160097BFDB /* StrokeCounterView.swift in Sources */,
 				7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */,
 				7C16DABC2D3236630097BFDB /* UploadScorecardView.swift in Sources */,
+				7C456C0A2D34CACE00F170BF /* StrokeCounterViewModel.swift in Sources */,
 				7CFCECD22CB633DF00359D20 /* UserAuth.swift in Sources */,
 				7C16DABF2D3236840097BFDB /* SocialView.swift in Sources */,
 			);

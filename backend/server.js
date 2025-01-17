@@ -91,6 +91,71 @@ app.post('/register', (req, res) => {
     return register_new_golfer(data.username, data.password, data.email, data.phone_number, res)
 })
 
+
+
+app.post('/record-stroke', (req, res) => {
+    const data = req.body
+    if (!data.userID || typeof data.userID !== 'number' || data.userID === -1) {
+        return res.status(400).json({ error: "Invalid or missing 'userID' in request body" });
+    }
+    if(!data.clubType || data.clubType === 'unassigned' || typeof data.clubType !== 'string'){
+        return res.status(400).json({ error: "Invalid or missing 'clubType' in request body" });
+    }
+    if(!data.distance || typeof data.distance !== 'string'){
+        return res.status(400).json({ error: "Invalid or missing 'distance' in request body" });
+    }
+    if(!data.rating || typeof data.rating !== 'string'){
+        return res.status(400).json({ error: "Invalid or missing 'rating' in request body" });
+    }
+    if(checkclubType(data.clubType) && checkDistance(data.distance) && checkRating(data.rating)){
+        //console.log('clubtype and distance and rating are good')
+        recordStrokeInDatabase(data, res)
+    }
+    else return res.status(400).json({ error: "VALIDATION ERROR"})
+
+    
+});
+
+function recordStrokeInDatabase(data, res){
+    console.log('recording stroke', data)
+    const userID = data.userID
+    const clubType = data.clubType
+    const distance = parseInt(data.distance)
+    const rating = parseFloat(data.rating)
+    //console.log(userID, clubType, distance, rating)
+    //need to insert values into database
+    checkRecordStrokeData(userID, clubType, distance, rating)
+    db_conn.run(`INSERT INTO GolferTakesStroke (Golfer_ID, ClubType, Distance, Rating ) VALUES (?, ?, ?, ?)`, [userID, clubType, distance, rating])
+
+
+    return res.status(200).json({message : `club type: ${data.clubType}, distance: ${data.distance}, rating: ${data.rating}`})
+}
+function checkRecordStrokeData(userID, clubtype, distance, rating){
+    //we should probably futher check the information here to make sure the requests are properly being handled
+}
+
+function checkclubType(clubType){
+    return true
+    //need to veryify that clubtype is actually correcty and not being injected with bad data other than actual clubs 
+}
+function checkDistance(distance){
+    if (/^\d+$/.test(distance)) return ((parseInt(distance, 10) <= 600) && parseInt(distance) > 0) 
+        else return false
+
+}
+function checkRating(rating){
+    // Check if the rating is a valid number (can be an integer or a float)
+    const parsedRating = parseFloat(rating);
+    
+    // Ensure the parsed rating is a valid number, is within the range [0, 10], and matches the string exactly
+    return !isNaN(parsedRating) && parsedRating >= 0 && parsedRating <= 10 && String(parsedRating) === rating;
+}
+
+
+
+
+
+
 app.use((req, res) => { 
     res.status(404).send(`<h2>Uh Oh!</h2><p>Sorry ${req.url} cannot be found here</p>`); 
 }); 
