@@ -73,7 +73,7 @@ struct Login_ButtonPanelView : View{
                     do {
                         let userID = try await viewModel.sign_in()
                         print("Sign_In successful, Golfer_ID: \(userID)")
-                        userAuth.log_in_user(userID: userID)
+                        let _ = userAuth.log_in_user(userID: userID)
                         navigationManager.navigate(to: .main)
                     }
                     catch{

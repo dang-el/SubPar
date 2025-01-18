@@ -85,6 +85,7 @@ struct Record_Stroke_Input_Panel: View {
 struct RecordStrokeView_Previews: PreviewProvider {
     static var previews: some View {
         RecordStrokeView(navigationPath: .constant(NavigationPath()))
+            .environmentObject(UserAuth().log_in_user(userID: 1))
             
     }
 }

@@ -152,6 +152,25 @@ function checkRating(rating){
 }
 
 
+app.post('/stroke-history', (req, res) => {
+    const data = req.body
+    
+    const userID = data.userID
+    console.log("Data recieved", userID)
+
+
+    db_conn.all("SELECT * FROM GolferTakesStroke WHERE Golfer_ID = ?", [data.userID], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            return res.status(400);
+        }
+        
+        console.log(`User ${userID}'s Strokes:`, rows);
+        return res.status(200).json(rows)
+    });
+    
+})
+
 
 
 

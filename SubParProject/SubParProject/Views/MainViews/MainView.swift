@@ -102,6 +102,7 @@ struct MainView: View {
                         .environmentObject(userAuth)
                 case "StrokeHistoryView":
                     StrokeHistoryView(navigationPath: $navigationPath)
+                        .environmentObject(userAuth)
                 case "UploadScorecardView":
                     UploadScorecardView(navigationPath: $navigationPath)
                 case "SocialView":
