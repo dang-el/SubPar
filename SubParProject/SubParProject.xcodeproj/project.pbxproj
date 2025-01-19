@@ -23,6 +23,7 @@
 		7C456C0A2D34CACE00F170BF /* StrokeCounterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */; };
 		7C456C0D2D34CEB000F170BF /* RecordStrokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */; };
 		7C456C0F2D34DE1C00F170BF /* RecordStrokeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */; };
+		7C8CA7602D3CD86C00F023A8 /* UploadScorecardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CA75F2D3CD86C00F023A8 /* UploadScorecardViewModel.swift */; };
 		7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */; };
 		7CEACB062D3A497100A1B54B /* StrokeHistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEACB052D3A497100A1B54B /* StrokeHistoryViewModel.swift */; };
 		7CFCECCB2CB60AE500359D20 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFCECCA2CB60AE500359D20 /* MainView.swift */; };
@@ -69,6 +70,7 @@
 		7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeCounterViewModel.swift; sourceTree = "<group>"; };
 		7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordStrokeView.swift; sourceTree = "<group>"; };
 		7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordStrokeViewModel.swift; sourceTree = "<group>"; };
+		7C8CA75F2D3CD86C00F023A8 /* UploadScorecardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadScorecardViewModel.swift; sourceTree = "<group>"; };
 		7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7CEACB052D3A497100A1B54B /* StrokeHistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeHistoryViewModel.swift; sourceTree = "<group>"; };
 		7CFCECCA2CB60AE500359D20 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -106,10 +108,10 @@
 		7C16DAB52D3235CD0097BFDB /* MainViews */ = {
 			isa = PBXGroup;
 			children = (
+				7C7F42992D3CD5F900E9A812 /* UploadScorecard */,
 				7CEACB042D3A494D00A1B54B /* StrokeHistory */,
 				7C456C082D34CAAE00F170BF /* StrokeCounter */,
 				7CFCECCA2CB60AE500359D20 /* MainView.swift */,
-				7C16DABB2D3236630097BFDB /* UploadScorecardView.swift */,
 				7C16DABE2D3236840097BFDB /* SocialView.swift */,
 			);
 			path = MainViews;
@@ -204,6 +206,15 @@
 			children = (
 			);
 			path = "New Group";
+			sourceTree = "<group>";
+		};
+		7C7F42992D3CD5F900E9A812 /* UploadScorecard */ = {
+			isa = PBXGroup;
+			children = (
+				7C16DABB2D3236630097BFDB /* UploadScorecardView.swift */,
+				7C8CA75F2D3CD86C00F023A8 /* UploadScorecardViewModel.swift */,
+			);
+			path = UploadScorecard;
 			sourceTree = "<group>";
 		};
 		7CE0F47B2CB6FC5500094A39 /* LoginView */ = {
@@ -393,6 +404,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C8CA7602D3CD86C00F023A8 /* UploadScorecardViewModel.swift in Sources */,
 				7CFCECD72CB6375000359D20 /* NavigationManagerViewModel.swift in Sources */,
 				7CFCECCF2CB62F9C00359D20 /* SignupViewModel.swift in Sources */,
 				7C32472D2CA36DAE00A26CC7 /* SignupView.swift in Sources */,

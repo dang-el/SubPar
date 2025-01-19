@@ -84,20 +84,34 @@ struct Filters_View: View {
             }
             VStack(spacing: 10) {
                 HStack(spacing: 20) {
-                    StyledButton(title: "Club Type")
-                    StyledButton(title: "Over Distance")
-                    StyledButton(title: "Under Distance")
+                    StyledButton(title: "Club Type"){
+                        
+                    }
+                    StyledButton(title: "Over Distance"){
+                        
+                    }
+                    StyledButton(title: "Under Distance"){
+                        
+                    }
                 }
 
                 HStack(spacing: 20) {
-                    StyledButton(title: "Over Rating")
-                    StyledButton(title: "Under Rating")
-                    StyledButton(title: "Clear Filters")
+                    StyledButton(title: "Over Rating"){
+                        
+                    }
+                    StyledButton(title: "Under Rating"){
+                        
+                    }
+                    StyledButton(title: "Clear Filters"){
+                        
+                    }
                 }
 
                 HStack {
                     Spacer()
-                    StyledButton(title: "Search", isPrimary: true)
+                    StyledButton(title: "Search", isPrimary: true){
+                        
+                    }
                         .frame(maxWidth: 150)
                     Spacer()
                 }
@@ -110,10 +124,10 @@ struct Filters_View: View {
 struct StyledButton: View {
     var title: String
     var isPrimary: Bool = false
-
+    var action: () -> Void // Closure to execute on button tap
     var body: some View {
         Button(action: {
-            // Button action here
+            action()
         }) {
             Text(title)
                 .font(.system(size: 14)) // Adjust font size
@@ -175,6 +189,6 @@ struct Stroke_History_View_Gradient: View {
 struct StrokeHistoryView_Previews: PreviewProvider {
     static var previews: some View {
         StrokeHistoryView(navigationPath: .constant(NavigationPath()))
-            .environmentObject(UserAuth().log_in_user(userID: 2))
+            .environmentObject(UserAuth().log_in_user(userID: 1))
     }
 }

@@ -62,37 +62,32 @@ struct MainView: View {
                     .padding(.vertical)
 
                     Spacer()
-
-                    HStack(spacing: 40) {
-                        Button {
-                            navigationPath.append("StrokeCounterView")
-                        } label: {
-                            Text("Stroke Counter")
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 40) {
+                            StyledButton(title: "Stroke Counter"){
+                                navigationPath.append("StrokeCounterView")
+                            }
+                            StyledButton(title: "Stroke History"){
+                                navigationPath.append("StrokeHistoryView")
+                            }
+                            StyledButton(title: "Upload Scorecard"){
+                                navigationPath.append("UploadScorecardView")
+                            }
+                            StyledButton(title: "Social"){
+                                navigationPath.append("SocialView")
+                            }
+                            
                         }
-                        Button {
-                            navigationPath.append("StrokeHistoryView")
-                        } label: {
-                            Text("Stroke History")
-                        }
-                        Button {
-                            navigationPath.append("UploadScorecardView")
-                        } label: {
-                            Text("Upload Scorecard")
-                        }
-                        Button {
-                            navigationPath.append("SocialView")
-                        } label: {
-                            Text("Social")
-                        }
+                        .padding(.horizontal) // Adds padding on the left and right
                     }
-
                     Spacer()
-
-                    Button {
+                    StyledButton(title: "Sign Out", isPrimary: true){
                         navigationManager.navigate(to: .home)
-                    } label: {
-                        Text("Sign_Out")
                     }
+                    .padding(.top, 20)
+                    .padding(.leading, 75)
+                    .padding(.trailing, 75)
+                    
                 }
             }
             .navigationDestination(for: String.self) { destination in
