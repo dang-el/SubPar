@@ -100,8 +100,10 @@ struct MainView: View {
                         .environmentObject(userAuth)
                 case "UploadScorecardView":
                     UploadScorecardView(navigationPath: $navigationPath)
+                        .environmentObject(userAuth)
                 case "SocialView":
                     SocialView(navigationPath: $navigationPath)
+                        .environmentObject(userAuth)
                 default:
                     Text("Unknown Destination")
                 }

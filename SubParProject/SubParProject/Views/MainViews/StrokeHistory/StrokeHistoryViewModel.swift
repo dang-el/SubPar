@@ -36,8 +36,15 @@ final class StrokeHistoryViewModel : ObservableObject{
             return
         }
 
-        isLoading = true
-        defer { isLoading = false }
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
+
+        defer {
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+        }
         
         // Prepare JSON body with the userID
         let requestBody: [String: Any] = ["userID": userID]

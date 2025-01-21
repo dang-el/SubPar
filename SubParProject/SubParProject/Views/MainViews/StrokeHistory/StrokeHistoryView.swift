@@ -85,32 +85,32 @@ struct Filters_View: View {
             VStack(spacing: 10) {
                 HStack(spacing: 20) {
                     StyledButton(title: "Club Type"){
-                        
+                        //action here
                     }
                     StyledButton(title: "Over Distance"){
-                        
+                        //action here
                     }
                     StyledButton(title: "Under Distance"){
-                        
+                        //action here
                     }
                 }
 
                 HStack(spacing: 20) {
                     StyledButton(title: "Over Rating"){
-                        
+                        //action here
                     }
                     StyledButton(title: "Under Rating"){
-                        
+                        //action here
                     }
                     StyledButton(title: "Clear Filters"){
-                        
+                        //action here
                     }
                 }
 
                 HStack {
                     Spacer()
                     StyledButton(title: "Search", isPrimary: true){
-                        
+                        //action here
                     }
                         .frame(maxWidth: 150)
                     Spacer()
