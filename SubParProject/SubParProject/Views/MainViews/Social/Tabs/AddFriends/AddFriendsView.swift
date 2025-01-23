@@ -9,10 +9,12 @@ import SwiftUI
 
 
 struct AddFriendsView: View {
-    @Binding var navigationPath: NavigationPath
-    @EnvironmentObject var userAuth: UserAuth
+    @StateObject var viewModel: AddFriendsViewModel = AddFriendsViewModel()
+    @Binding var navigationPath: NavigationPath  // Binding to the navigation path
+    @EnvironmentObject var userAuth : UserAuth
+
     var body: some View {
-        ZStack{
+        ZStack {
             LinearGradient(gradient: Gradient(colors: [
                 Color(red: 115/255, green: 185/255, blue: 115/255),
                 Color(red: 115/255, green: 175/255, blue: 100/255),
@@ -29,18 +31,63 @@ struct AddFriendsView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Spacer()
-                StyledButton(title: "Go Back", isPrimary: true ){
-                    navigationPath.removeLast()
+                SearchFriendsView(viewModel: viewModel, navigationPath: $navigationPath)
+                Spacer()
+                StyledButton(title: "Go Back", isPrimary: true) {
+                    navigationPath.removeLast() // Go back to the previous view
                 }
-                .padding(.leading, 75)
-                .padding(.trailing, 75)
+                .padding(.leading, 125)
+                .padding(.trailing, 125)
             }
-            
         }
         .navigationBarBackButtonHidden(true)
+        .navigationDestination(for: AddFriendsViewModel.GolferResponse.self) { golfer in
+            AddProfileView(viewModel: viewModel, golfer: golfer, navigationPath: $navigationPath)
+                .environmentObject(userAuth)
         
+        }
     }
 }
+
+struct SearchFriendsView: View {
+    @StateObject var viewModel: AddFriendsViewModel
+    @Binding var navigationPath: NavigationPath
+
+    var body: some View {
+        VStack {
+            Text("Search For Friends")
+                .font(.headline)
+            TextField("Enter Friends Name", text: $viewModel.friendsName)
+                .padding(.leading, 25)
+                .autocapitalization(.none)
+            AddableFriendsView(viewModel: viewModel, navigationPath: $navigationPath)
+        }
+        .padding(.top, 25)
+    }
+}
+struct AddableFriendsView: View {
+    @StateObject var viewModel: AddFriendsViewModel
+    @Binding var navigationPath: NavigationPath
+
+    var body: some View {
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(viewModel.Golfers, id: \.self) { golfer in
+                        StyledButton(title: golfer.Username) {
+                            // Push golfer to navigation path
+                            navigationPath.append(golfer)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+}
+
+
 struct AddFriendsView_Previews: PreviewProvider {
     static var previews: some View {
         AddFriendsView(navigationPath: .constant(NavigationPath()))

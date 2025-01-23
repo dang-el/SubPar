@@ -171,8 +171,93 @@ app.post('/stroke-history', (req, res) => {
     
 })
 
+app.post('/search/golfers', (req, res) =>{
+    const data = req.body
+    console.log(data)
+    //validate input
+    if (!checkSearchGolferRequestData(req, res)){
+        return
+    }
+    return getGolfersOfNameFromDB(data.friendsName, res)
+
+    
+})
+function getGolfersOfNameFromDB(friendsName, res){
+    const query = "SELECT Golfer_ID, Golfers.Username FROM Golfers WHERE Golfers.Username LIKE ?";
+    const searchTerm = `%${friendsName}%`; // Add '%' to friendsName before passing it as a parameter
+
+    db_conn.all(query, [searchTerm], (err, rows) => {
+        if (err) {
+            console.error(err.message)
+            return res.status(400).json({error : `${err.message}`})
+        }
+        console.log(`Golfers:`, rows)
+        return res.status(200).json(rows)
+    })
+}
+function checkSearchGolferRequestData(req, res){
+    const data = req.body
+    console.log(data)
+    //check for friendsName and that it is a string
+    if(!data.friendsName || typeof data.friendsName !== 'string'){
+        res.status(400).json({error: "Invalid Data"})
+        return false
+    }
+    else{
+        if(!check_str_for_invalid_chars(data.friendsName)){
+            //bad values found in string
+            res.status(400).json({error: "Invalid Characters in Request Body"})
+            return false
+        }
+        else return true
+        
+    }
+}
 
 
+app.post('/addFriend', (req, res) => {
+    const { requestingUserID, receivingUserID } = req.body;
+
+    // Validate request data
+    if (!checkAddFriendReqData({ requestingUserID, receivingUserID })) {
+        return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Check if a friend request already exists
+    db_conn.get(`SELECT * FROM GolferSendsFriendRequest WHERE RequestingGolferID = ? AND ReceivingGolferID = ?`, [requestingUserID, receivingUserID], (err, row) => {
+        if (err) {
+            console.error("Error checking for existing friend request:", err.message);
+            return res.status(500).json({ error: "An error occurred while checking for existing request." });
+        }
+
+        // If a request already exists, prevent sending another one
+        if (row) {
+            return res.status(400).json({ error: "Friend request already sent." });
+        }
+
+        // Insert the new friend request
+        db_conn.run(`INSERT INTO GolferSendsFriendRequest (RequestingGolferID, ReceivingGolferID) VALUES (?, ?)`, [requestingUserID, receivingUserID], function(err) {
+            if (err) {
+                console.error("Error inserting friend request:", err.message);
+                return res.status(500).json({ error: "An error occurred while processing your request." });
+            }
+
+            console.log("Friend request sent successfully.");
+            return res.status(200).json({ message: "Friend request sent successfully!" });
+        });
+    });
+});
+
+// Helper function to validate the request data
+function checkAddFriendReqData(data) {
+    if (!data.requestingUserID || typeof data.requestingUserID !== 'number' || data.requestingUserID === -1) {
+        return false;
+    }
+    if (!data.receivingUserID || typeof data.receivingUserID !== 'number' || data.receivingUserID === -1) {
+        return false;
+    }
+    return true;
+}
 
 
 app.use((req, res) => { 
@@ -274,9 +359,10 @@ function add_user_to_db(username, password, email, phone_number, res){
 function checkIfString(param) {
     return typeof param === 'string';
 }
-function check_str_for_invalid_chars(string){
-    //return true if not of the bad values are present
-    return (!(string.includes(" ") || string.includes(",") || string.includes("'") || string.includes("\"") || string.includes(".")))
+function check_str_for_invalid_chars(string) {
+    string = string.trim();  // Remove leading/trailing whitespace if any
+    console.log("Checking string:", string);  // Log the string for debugging
+    return (!(string.includes(" ") || string.includes(",") || string.includes("'") || string.includes("\"") || string.includes(".")));
 }
 function is_password_valid(string){
     // Ensure the string doesn't contain invalid characters

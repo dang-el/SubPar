@@ -64,6 +64,7 @@ struct SocialView: View {
             switch destination {
             case .addFriends:
                 AddFriendsView(navigationPath: $navigationPath)
+                    .environmentObject(userAuth)
             case .addedMe:
                 AddedMeView(navigationPath: $navigationPath)
             }
