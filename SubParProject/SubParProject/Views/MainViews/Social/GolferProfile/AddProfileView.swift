@@ -32,7 +32,15 @@ struct AddProfileView: View {
                     .fontWeight(.bold)
                     .padding()
                 
-                // Add other golfer details as needed
+                
+                
+                
+                
+                GolferProfile(golfer: golfer)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    
+                
+                
                 Spacer()
                 VStack{
                     StyledButton(title: "Send Friend Request") {
@@ -57,6 +65,7 @@ struct AddProfileView: View {
         
     }
 }
+
 struct AddProfileView_Previews: PreviewProvider {
     static var previews: some View {
         AddProfileView(viewModel: AddFriendsViewModel(), golfer: AddFriendsViewModel.GolferResponse(Golfer_ID: 1,Username: "owendangel4096"), navigationPath: .constant(NavigationPath()))

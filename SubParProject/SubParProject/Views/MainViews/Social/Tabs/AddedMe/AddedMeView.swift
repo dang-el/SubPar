@@ -11,8 +11,10 @@ import SwiftUI
 struct AddedMeView: View {
     @Binding var navigationPath: NavigationPath
     @EnvironmentObject var userAuth: UserAuth
+    @StateObject var viewModel: AddedMeViewModel = AddedMeViewModel()
+    
     var body: some View {
-        ZStack{
+        ZStack {
             LinearGradient(gradient: Gradient(colors: [
                 Color(red: 115/255, green: 185/255, blue: 115/255),
                 Color(red: 115/255, green: 175/255, blue: 100/255),
@@ -20,27 +22,126 @@ struct AddedMeView: View {
                 Color(red: 0/255, green: 200/255, blue: 255/255),
                 Color(red: 255/255, green: 255/255, blue: 165/255)
             ]),
-            startPoint: .bottom,
-            endPoint: .topTrailing)
+                           startPoint: .bottom,
+                           endPoint: .topTrailing)
             .edgesIgnoringSafeArea(.all)
-
+            
             VStack {
                 Text("Added Me")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Spacer()
-                StyledButton(title: "Go Back", isPrimary: true ){
+                
+                ScrollView {
+                    VStack {
+                        
+                        if viewModel.loading {
+                            // Show a loading indicator
+                            HStack {
+                                Text("Loading friend requests...")
+                                    .foregroundColor(.gray)
+                                    .padding()
+                                ProgressView()
+                            }
+                        } else if viewModel.FriendRequests.isEmpty {
+                            // Show a message if there are no friend requests
+                            Text("No friend requests yet.")
+                                .foregroundColor(.gray)
+                                .padding()
+                        } else {
+                            // Display the actual friend requests
+                            ForEach(viewModel.FriendRequests, id: \.Golfer_ID) { golfer in
+                                IncomingFriendRequest(viewModel: viewModel, friendName: golfer.Username)
+                                    .padding(10)
+                            }
+                        }
+                    }
+                }
+                
+                Spacer()
+                
+                StyledButton(title: "Go Back", isPrimary: true) {
                     navigationPath.removeLast()
                 }
-                .padding(.leading, 75)
-                .padding(.trailing, 75)
+                .padding(.horizontal, 75)
             }
-            
         }
         .navigationBarBackButtonHidden(true)
-        
+        .onAppear {
+            // Call the fetchData function when the view appears
+            Task {
+                do {
+                    try await viewModel.getRequests(userAuth: userAuth)
+                } catch {
+                    print("Failed to fetch friend requests: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 }
+struct IncomingFriendRequest: View {
+    @StateObject var viewModel : AddedMeViewModel
+    var friendName: String
+    
+    var body: some View {
+        HStack {
+            // Placeholder for a profile image
+            Circle()
+                .fill(Color.blue)
+                .frame(width: 50, height: 50)
+                .overlay(
+                    Text(friendName.prefix(1)) // Display the first letter of the friend's name
+                        .font(.headline)
+                        .foregroundColor(.white)
+                )
+            
+            // Friend name and optional subtitle
+            VStack(alignment: .leading) {
+                Text(friendName)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                
+                Text("Sent you a friend request")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+            .padding(.leading, 10)
+            
+            Spacer()
+            
+            // Action buttons
+            HStack {
+                Button(action: {
+                    viewModel.acceptFriendRequest()
+                }) {
+                    Text("Accept")
+                        .frame(minWidth: 70) // Set a minimum width
+                        .padding(.vertical, 8)
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                
+                Button(action: {
+                    viewModel.declineFriendRequest()
+                }) {
+                    Text("Decline")
+                        .frame(minWidth: 70) // Set a minimum width
+                        .padding(.vertical, 8)
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+        .shadow(radius: 3)
+    }
+}
+
+
 struct AddedMe_Previews: PreviewProvider {
     static var previews: some View {
         AddedMeView(navigationPath: .constant(NavigationPath()))

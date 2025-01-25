@@ -260,6 +260,35 @@ function checkAddFriendReqData(data) {
 }
 
 
+function checkFriendRequestData(data){
+    return true
+}
+app.post('/friend-requests', (req, res) => {
+    const data = req.body
+    console.log(data)
+
+    if (!checkFriendRequestData(data)){
+        return res.status(400).send()
+    }
+    const searchTerm = data.userID
+    const query = ` SELECT g.Golfer_ID, g.Username
+                    FROM Golfers AS g
+                    JOIN GolferSendsFriendRequest AS gsfr
+                    ON g.Golfer_ID = gsfr.RequestingGolferID
+                    WHERE gsfr.ReceivingGolferID = ?;
+                    `
+    db_conn.all(query, [searchTerm], (err, rows) => {
+        if (err) {
+            console.error(err.message)
+            return res.status(400).json({error : `${err.message}`})
+        }
+        console.log(`Golfers:`, rows)
+        return res.status(200).json(rows)
+    })
+})
+
+
+
 app.use((req, res) => { 
     res.status(404).send(`<h2>Uh Oh!</h2><p>Sorry ${req.url} cannot be found here</p>`); 
 }); 
@@ -362,7 +391,7 @@ function checkIfString(param) {
 function check_str_for_invalid_chars(string) {
     string = string.trim();  // Remove leading/trailing whitespace if any
     console.log("Checking string:", string);  // Log the string for debugging
-    return (!(string.includes(" ") || string.includes(",") || string.includes("'") || string.includes("\"") || string.includes(".")));
+    return (!(string.includes(" ") || string.includes(",") || string.includes("'") || string.includes("\\") || string.includes(".")));
 }
 function is_password_valid(string){
     // Ensure the string doesn't contain invalid characters
@@ -413,13 +442,8 @@ function validatePhoneNumber(phone) {
     const phonePattern = /^(\+?\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
     return phonePattern.test(phone);
 }
-function encrypt_password(password){
-    //need to actually enctypt this
-    return hashPassword(password)
-}
-async function hashPassword(password) {
+async function encrypt_password(password){
     // 10 is the salt rounds, which defines the strength of the hashing
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(password, saltRounds);
-    return hash;
+    return await bcrypt.hash(password, 10);
 }
+

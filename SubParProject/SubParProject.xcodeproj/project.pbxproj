@@ -28,6 +28,8 @@
 		7C8CA7602D3CD86C00F023A8 /* UploadScorecardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8CA75F2D3CD86C00F023A8 /* UploadScorecardViewModel.swift */; };
 		7C9570512D3F6AB8005EC722 /* SocialViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C9570502D3F6AB8005EC722 /* SocialViewModel.swift */; };
 		7C9570542D3F7754005EC722 /* AddFriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C9570532D3F7754005EC722 /* AddFriendsView.swift */; };
+		7CA8A2DE2D44CAC30001A95A /* GolferProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA8A2DD2D44CAC30001A95A /* GolferProfile.swift */; };
+		7CA8A2E02D44CD360001A95A /* AddedMeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA8A2DF2D44CD360001A95A /* AddedMeViewModel.swift */; };
 		7CD146272D42E4EE002AF8B5 /* AddProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD146262D42E4EE002AF8B5 /* AddProfileView.swift */; };
 		7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */; };
 		7CEACB062D3A497100A1B54B /* StrokeHistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEACB052D3A497100A1B54B /* StrokeHistoryViewModel.swift */; };
@@ -80,6 +82,8 @@
 		7C8CA75F2D3CD86C00F023A8 /* UploadScorecardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadScorecardViewModel.swift; sourceTree = "<group>"; };
 		7C9570502D3F6AB8005EC722 /* SocialViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialViewModel.swift; sourceTree = "<group>"; };
 		7C9570532D3F7754005EC722 /* AddFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendsView.swift; sourceTree = "<group>"; };
+		7CA8A2DD2D44CAC30001A95A /* GolferProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GolferProfile.swift; sourceTree = "<group>"; };
+		7CA8A2DF2D44CD360001A95A /* AddedMeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddedMeViewModel.swift; sourceTree = "<group>"; };
 		7CD146262D42E4EE002AF8B5 /* AddProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProfileView.swift; sourceTree = "<group>"; };
 		7CE0F47C2CB6FD0700094A39 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7CEACB052D3A497100A1B54B /* StrokeHistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeHistoryViewModel.swift; sourceTree = "<group>"; };
@@ -119,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				7C021B882D3F7CEF00517F23 /* AddedMeView.swift */,
+				7CA8A2DF2D44CD360001A95A /* AddedMeViewModel.swift */,
 			);
 			path = AddedMe;
 			sourceTree = "<group>";
@@ -257,6 +262,7 @@
 			isa = PBXGroup;
 			children = (
 				7CD146262D42E4EE002AF8B5 /* AddProfileView.swift */,
+				7CA8A2DD2D44CAC30001A95A /* GolferProfile.swift */,
 			);
 			path = GolferProfile;
 			sourceTree = "<group>";
@@ -479,6 +485,8 @@
 				7CEACB062D3A497100A1B54B /* StrokeHistoryViewModel.swift in Sources */,
 				7C9570542D3F7754005EC722 /* AddFriendsView.swift in Sources */,
 				7C16DABC2D3236630097BFDB /* UploadScorecardView.swift in Sources */,
+				7CA8A2DE2D44CAC30001A95A /* GolferProfile.swift in Sources */,
+				7CA8A2E02D44CD360001A95A /* AddedMeViewModel.swift in Sources */,
 				7CD146272D42E4EE002AF8B5 /* AddProfileView.swift in Sources */,
 				7C456C0A2D34CACE00F170BF /* StrokeCounterViewModel.swift in Sources */,
 				7CFCECD22CB633DF00359D20 /* UserAuth.swift in Sources */,

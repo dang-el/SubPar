@@ -67,6 +67,7 @@ struct SocialView: View {
                     .environmentObject(userAuth)
             case .addedMe:
                 AddedMeView(navigationPath: $navigationPath)
+                    .environmentObject(userAuth)
             }
         }
     }

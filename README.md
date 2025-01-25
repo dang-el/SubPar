@@ -163,12 +163,8 @@ Either the User did not enter the correct username and email or password or the 
 ### TODO:
 * Need to learn more about how the language works before i get more into the code
 
-* think of languages for Back end server
--  ruby - sinatra
 -  javascript - node
 
-
-create a database to store golfers information
 ## Bugs:
 
 
