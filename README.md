@@ -168,4 +168,5 @@ Either the User did not enter the correct username and email or password or the 
 ## Bugs:
 
 
-
+if a user is added as a friend a friend reqest can be sent to them again.
+this needs to be fixed

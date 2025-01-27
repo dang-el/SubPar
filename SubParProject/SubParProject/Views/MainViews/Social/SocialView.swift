@@ -35,6 +35,8 @@ struct SocialView: View {
                     .fontWeight(.bold)
 
                 Spacer()
+                FriendsView()
+                Spacer()
                 HStack(spacing: 30) {
                     StyledButton(title: "Add Friends") {
                         // Navigate to Add Friends View
@@ -73,6 +75,77 @@ struct SocialView: View {
     }
 }
 
+struct FriendsView: View {
+    @StateObject private var viewModel = SocialViewModel() // Initialize the ViewModel
+    @EnvironmentObject var userAuth: UserAuth
+    
+    var body: some View {
+        VStack {
+            if viewModel.loading {
+                // Loading indicator while fetching friends
+                ProgressView("Loading friends...")
+                    .padding()
+            } else if viewModel.Friends.isEmpty {
+                // Message for no friends
+                Text("You have no friends yet.")
+                    .foregroundColor(.gray)
+                    .padding()
+            } else {
+                // Friends list in a scroll view
+                ScrollView {
+                    VStack(spacing: 15) {
+                        ForEach(viewModel.Friends, id: \.Golfer_ID) { friend in
+                            FriendCard(friend: friend)
+                        }
+                    }
+                    .padding()
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .onAppear {
+            Task {
+                do {
+                    try await viewModel.getFriends(userAuth: userAuth)
+                } catch {
+                    print("Failed to fetch friends: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+}
+
+struct FriendCard: View {
+    let friend: SocialViewModel.GolferResponse
+    
+    var body: some View {
+        HStack(spacing: 15) {
+            Circle()
+                .fill(Color.blue)
+                .frame(width: 50, height: 50)
+                .overlay(
+                    Text(friend.Username.prefix(1))
+                        .font(.headline)
+                        .foregroundColor(.white)
+                )
+            
+            VStack(alignment: .leading) {
+                Text(friend.Username)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                Text("Golfer ID: \(friend.Golfer_ID)")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+            Spacer()
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+        .shadow(radius: 3)
+    }
+}
 
 
 

@@ -115,6 +115,210 @@ app.post('/record-stroke', (req, res) => {
 
     
 });
+app.post('/friend-requests', (req, res) => {
+    const data = req.body
+    console.log(data)
+
+    if (!checkFriendRequestData(data)){
+        return res.status(400).send()
+    }
+    const searchTerm = data.userID
+    const query = ` SELECT g.Golfer_ID, g.Username
+                    FROM Golfers AS g
+                    JOIN GolferSendsFriendRequest AS gsfr
+                    ON g.Golfer_ID = gsfr.RequestingGolferID
+                    WHERE gsfr.ReceivingGolferID = ?;
+                    `
+    db_conn.all(query, [searchTerm], (err, rows) => {
+        if (err) {
+            console.error(err.message)
+            return res.status(400).json({error : `${err.message}`})
+        }
+        console.log(`Golfers:`, rows)
+        return res.status(200).json(rows)
+    })
+})
+
+
+app.post('/stroke-history', (req, res) => {
+    const data = req.body
+    
+    const userID = data.userID
+    console.log("Data recieved", userID)
+
+
+    db_conn.all("SELECT * FROM GolferTakesStroke WHERE Golfer_ID = ?", [data.userID], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            return res.status(400);
+        }
+        
+        console.log(`User ${userID}'s Strokes:`, rows);
+        return res.status(200).json(rows)
+    });
+    
+})
+
+app.post('/search/golfers', (req, res) =>{
+    const data = req.body
+    console.log(data)
+    //validate input
+    if (!checkSearchGolferRequestData(req, res)){
+        return
+    }
+    return getGolfersOfNameFromDB(data.friendsName, res)
+
+    
+})
+
+app.post('/search/friends', (req, res) =>{
+    const data = req.body
+    console.log(data)
+    //validate input
+    if(!data.userID){
+        return res.status(400).json({error : "NO ID PROVIDED"})
+    }
+    if (!checkID(data.userID)){
+        return res.status(400).json({error : "INVALID DATA IN USERID"})
+    }
+    const sql = `
+                SELECT g.Golfer_ID, g.Username
+                FROM GolferHasFriend ghf
+                JOIN Golfers g ON ghf.FriendID = g.Golfer_ID
+                WHERE ghf.GolferID = ?
+
+                UNION
+
+                SELECT g.Golfer_ID, g.Username
+                FROM GolferHasFriend ghf
+                JOIN Golfers g ON ghf.GolferID = g.Golfer_ID
+                WHERE ghf.FriendID = ?;
+                `
+    
+    db_conn.all(sql, [data.userID, data.userID], (err, rows) => {
+        if (err) {
+            console.error(err.message)
+            return res.status(400).json({error : `${err.message}`})
+        }
+        console.log(`Golfers:`, rows)
+        return res.status(200).json(rows)
+    })
+
+
+    
+})
+
+app.post('/addFriend', (req, res) => {
+    const { requestingUserID, receivingUserID } = req.body;
+
+    // Validate request data
+    if (!checkAddFriendReqData({ requestingUserID, receivingUserID })) {
+        return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    // Check if a friend request already exists
+    db_conn.get(`SELECT * FROM GolferSendsFriendRequest WHERE RequestingGolferID = ? AND ReceivingGolferID = ?`, [requestingUserID, receivingUserID], (err, row) => {
+        if (err) {
+            console.error("Error checking for existing friend request:", err.message);
+            return res.status(500).json({ error: "An error occurred while checking for existing request." });
+        }
+
+        // If a request already exists, prevent sending another one
+        if (row) {
+            return res.status(400).json({ error: "Friend request already sent." });
+        }
+
+        // Insert the new friend request
+        db_conn.run(`INSERT INTO GolferSendsFriendRequest (RequestingGolferID, ReceivingGolferID) VALUES (?, ?)`, [requestingUserID, receivingUserID], function(err) {
+            if (err) {
+                console.error("Error inserting friend request:", err.message);
+                return res.status(500).json({ error: "An error occurred while processing your request." });
+            }
+
+            console.log("Friend request sent successfully.");
+            return res.status(200).json({ message: "Friend request sent successfully!" });
+        });
+    });
+});
+
+
+
+app.post('/accept-friend-request', (req, res) => {
+    const data = req.body
+    console.log("recieved", data)
+    if(!data.userID && data.friendID){
+        return res.status(400).json({error : "MISSING ID"})
+    }
+    const userID = data.userID
+    const friendID = data.friendID
+    if(!(checkID(userID) && checkID(friendID))){
+        return res.status(400).json({error : "ERROR CHECKING ID"})
+    }
+    //make a new entry in the GolferHasFriend Table
+    db_conn.run(`INSERT INTO GolferHasFriend (GolferID, FriendID) VALUES (?, ?)`, [userID, friendID], function(err) {
+        if (err) {
+            console.error("Error inserting friend request:", err.message);
+            return res.status(500).json({ error: "An error occurred while processing your request." });
+        }
+
+        console.log("Friend request sent successfully.");
+        
+    });
+
+    //when we get here we have a userID and a friendID and the user trying to remove the friends request
+    removeFriendRequestFromDB(res, userID, friendID)
+
+})
+
+
+function removeFriendRequestFromDB(res, userID, friendID){
+    // SQL query to delete the entry
+    const query = `DELETE FROM GolferSendsFriendRequest WHERE ReceivingGolferID = ? AND RequestingGolferID = ?`;
+
+    db_conn.run(query, [userID, friendID], function (err) {
+        if (err) {
+            console.error('Error running delete query:', err.message);
+            return res.status(500).json({ error: "Database error" });
+        }
+
+        if (this.changes === 0) {
+            // No rows were affected, meaning no matching entry was found
+            return res.status(404).json({ error: "No matching friend request found" });
+        }
+
+        console.log(`Deleted friend request: userID=${userID}, friendID=${friendID}`);
+        return res.status(200).json({ message: "Friend request declined" });
+    });
+}
+
+
+app.post('/decline-friend-request', (req, res) => {
+    const data = req.body
+    console.log("recieved", data)
+    if(!data.userID && data.friendID){
+        return res.status(400).json({error : "MISSING ID"})
+    }
+    const userID = data.userID
+    const friendID = data.friendID
+    if(!(checkID(userID) && checkID(friendID))){
+        return res.status(400).json({error : "ERROR CHECKING ID"})
+    }
+    //when we get here we have a userID and a friendID and the user trying to remove the friends request
+    removeFriendRequestFromDB(res, userID, friendID)
+
+})
+function checkID(id){
+    if(typeof id == 'number' && id > -1) return true
+    else return false
+    
+}
+
+
+
+
+
+
+
 
 function recordStrokeInDatabase(data, res){
     console.log('recording stroke', data)
@@ -152,36 +356,6 @@ function checkRating(rating){
 }
 
 
-app.post('/stroke-history', (req, res) => {
-    const data = req.body
-    
-    const userID = data.userID
-    console.log("Data recieved", userID)
-
-
-    db_conn.all("SELECT * FROM GolferTakesStroke WHERE Golfer_ID = ?", [data.userID], (err, rows) => {
-        if (err) {
-            console.error(err.message);
-            return res.status(400);
-        }
-        
-        console.log(`User ${userID}'s Strokes:`, rows);
-        return res.status(200).json(rows)
-    });
-    
-})
-
-app.post('/search/golfers', (req, res) =>{
-    const data = req.body
-    console.log(data)
-    //validate input
-    if (!checkSearchGolferRequestData(req, res)){
-        return
-    }
-    return getGolfersOfNameFromDB(data.friendsName, res)
-
-    
-})
 function getGolfersOfNameFromDB(friendsName, res){
     const query = "SELECT Golfer_ID, Golfers.Username FROM Golfers WHERE Golfers.Username LIKE ?";
     const searchTerm = `%${friendsName}%`; // Add '%' to friendsName before passing it as a parameter
@@ -215,38 +389,6 @@ function checkSearchGolferRequestData(req, res){
 }
 
 
-app.post('/addFriend', (req, res) => {
-    const { requestingUserID, receivingUserID } = req.body;
-
-    // Validate request data
-    if (!checkAddFriendReqData({ requestingUserID, receivingUserID })) {
-        return res.status(400).json({ error: "Invalid request data" });
-    }
-
-    // Check if a friend request already exists
-    db_conn.get(`SELECT * FROM GolferSendsFriendRequest WHERE RequestingGolferID = ? AND ReceivingGolferID = ?`, [requestingUserID, receivingUserID], (err, row) => {
-        if (err) {
-            console.error("Error checking for existing friend request:", err.message);
-            return res.status(500).json({ error: "An error occurred while checking for existing request." });
-        }
-
-        // If a request already exists, prevent sending another one
-        if (row) {
-            return res.status(400).json({ error: "Friend request already sent." });
-        }
-
-        // Insert the new friend request
-        db_conn.run(`INSERT INTO GolferSendsFriendRequest (RequestingGolferID, ReceivingGolferID) VALUES (?, ?)`, [requestingUserID, receivingUserID], function(err) {
-            if (err) {
-                console.error("Error inserting friend request:", err.message);
-                return res.status(500).json({ error: "An error occurred while processing your request." });
-            }
-
-            console.log("Friend request sent successfully.");
-            return res.status(200).json({ message: "Friend request sent successfully!" });
-        });
-    });
-});
 
 // Helper function to validate the request data
 function checkAddFriendReqData(data) {
@@ -263,29 +405,7 @@ function checkAddFriendReqData(data) {
 function checkFriendRequestData(data){
     return true
 }
-app.post('/friend-requests', (req, res) => {
-    const data = req.body
-    console.log(data)
 
-    if (!checkFriendRequestData(data)){
-        return res.status(400).send()
-    }
-    const searchTerm = data.userID
-    const query = ` SELECT g.Golfer_ID, g.Username
-                    FROM Golfers AS g
-                    JOIN GolferSendsFriendRequest AS gsfr
-                    ON g.Golfer_ID = gsfr.RequestingGolferID
-                    WHERE gsfr.ReceivingGolferID = ?;
-                    `
-    db_conn.all(query, [searchTerm], (err, rows) => {
-        if (err) {
-            console.error(err.message)
-            return res.status(400).json({error : `${err.message}`})
-        }
-        console.log(`Golfers:`, rows)
-        return res.status(200).json(rows)
-    })
-})
 
 
 

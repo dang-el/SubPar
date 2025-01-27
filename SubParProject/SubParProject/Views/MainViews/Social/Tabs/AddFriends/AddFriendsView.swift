@@ -91,6 +91,6 @@ struct AddableFriendsView: View {
 struct AddFriendsView_Previews: PreviewProvider {
     static var previews: some View {
         AddFriendsView(navigationPath: .constant(NavigationPath()))
-            .environmentObject(UserAuth().log_in_user(userID: 1))
+            .environmentObject(UserAuth().log_in_user(userID: 2))
     }
 }

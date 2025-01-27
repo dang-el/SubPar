@@ -51,7 +51,8 @@ struct AddedMeView: View {
                         } else {
                             // Display the actual friend requests
                             ForEach(viewModel.FriendRequests, id: \.Golfer_ID) { golfer in
-                                IncomingFriendRequest(viewModel: viewModel, friendName: golfer.Username)
+                                IncomingFriendRequest(viewModel: viewModel, friendRequesting: golfer)
+                                    .environmentObject(userAuth)
                                     .padding(10)
                             }
                         }
@@ -81,23 +82,30 @@ struct AddedMeView: View {
 }
 struct IncomingFriendRequest: View {
     @StateObject var viewModel : AddedMeViewModel
-    var friendName: String
-    
+    var friendRequesting: AddedMeViewModel.GolferResponse
+    @EnvironmentObject var userAuth : UserAuth
     var body: some View {
         HStack {
             // Placeholder for a profile image
             Circle()
-                .fill(Color.blue)
+                .fill(Color.cyan)
                 .frame(width: 50, height: 50)
+            
                 .overlay(
-                    Text(friendName.prefix(1)) // Display the first letter of the friend's name
+                    Text(friendRequesting.Username.prefix(1)) // Display the first letter of the friend's name
                         .font(.headline)
                         .foregroundColor(.white)
                 )
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: 2) // Add a white border
+                )
+                .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2) // Add a subtle shadow
+            
             
             // Friend name and optional subtitle
             VStack(alignment: .leading) {
-                Text(friendName)
+                Text(friendRequesting.Username)
                     .font(.headline)
                     .fontWeight(.bold)
                 
@@ -112,7 +120,10 @@ struct IncomingFriendRequest: View {
             // Action buttons
             HStack {
                 Button(action: {
-                    viewModel.acceptFriendRequest()
+                    Task{
+                        try await viewModel.acceptFriendRequest(userAuth: userAuth, friendRequesting: friendRequesting)
+                    }
+                    
                 }) {
                     Text("Accept")
                         .frame(minWidth: 70) // Set a minimum width
@@ -123,7 +134,10 @@ struct IncomingFriendRequest: View {
                 }
                 
                 Button(action: {
-                    viewModel.declineFriendRequest()
+                    Task{
+                        try await viewModel.declineFriendRequest(userAuth: userAuth , friendRequesting: friendRequesting)
+                    }
+                    
                 }) {
                     Text("Decline")
                         .frame(minWidth: 70) // Set a minimum width
