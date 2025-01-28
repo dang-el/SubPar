@@ -76,6 +76,9 @@ struct MainView: View {
                             StyledButton(title: "Social"){
                                 navigationPath.append("SocialView")
                             }
+                            StyledButton(title: "Scorecards"){
+                                navigationPath.append("ScorecardsView")
+                            }
                             
                         }
                         .padding(.horizontal) // Adds padding on the left and right
@@ -104,6 +107,9 @@ struct MainView: View {
                 case "SocialView":
                     SocialView(navigationPath: $navigationPath)
                         .environmentObject(userAuth)
+                case "ScorecardsView" : ScorecardsView(navigationPath: $navigationPath)
+                        .environmentObject(userAuth)
+                    
                 default:
                     Text("Unknown Destination")
                 }

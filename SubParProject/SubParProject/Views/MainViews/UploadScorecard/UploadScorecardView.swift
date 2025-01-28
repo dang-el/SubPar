@@ -13,7 +13,7 @@ import PhotosUI
 struct PhotoPickerView: View {
     
     @ObservedObject var viewModel: UploadScorecardViewModel
-
+    @EnvironmentObject var userAuth : UserAuth
     var body: some View {
         VStack(spacing: 50) {
             // Display the selected image
@@ -26,7 +26,10 @@ struct PhotoPickerView: View {
                         .cornerRadius(10)
                         .padding()
                     Button {
-                        viewModel.uploadImage()
+                        Task{
+                            try await viewModel.uploadImage(userAuth: userAuth)
+                        }
+                        
                     } label: {
                         Text("Upload")
                             .padding()
@@ -73,6 +76,7 @@ struct PhotoPickerView: View {
 
 struct UploadScorecardView: View {
     @Binding var navigationPath: NavigationPath
+    @EnvironmentObject var userAuth : UserAuth
     let viewModel : UploadScorecardViewModel = UploadScorecardViewModel()
     var body: some View {
         ZStack{
@@ -91,6 +95,7 @@ struct UploadScorecardView: View {
                     .fontWeight(.bold)
                 Spacer()
                 PhotoPickerView(viewModel: viewModel)
+                    .environmentObject(userAuth)
                 Spacer()
                 Button("Go Back") {
                     navigationPath.removeLast()
@@ -109,5 +114,6 @@ struct UploadScorecardView: View {
 struct UploadScorecardView_Previews: PreviewProvider {
     static var previews: some View {
         UploadScorecardView(navigationPath: .constant(NavigationPath()))
+            .environmentObject(UserAuth().log_in_user(userID: 1))
     }
 }

@@ -8,7 +8,7 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express(); 
  
 app.use(morgan('dev')); 
-app.use(express.json())
+app.use(express.json({limit : '10mb'}))
 
 app.listen(6000, () => console.log('The server is up and running...'));
 
@@ -271,6 +271,55 @@ app.post('/accept-friend-request', (req, res) => {
 })
 
 
+app.post('/decline-friend-request', (req, res) => {
+    const data = req.body
+    console.log("recieved", data)
+    if(!data.userID && data.friendID){
+        return res.status(400).json({error : "MISSING ID"})
+    }
+    const userID = data.userID
+    const friendID = data.friendID
+    if(!(checkID(userID) && checkID(friendID))){
+        return res.status(400).json({error : "ERROR CHECKING ID"})
+    }
+    //when we get here we have a userID and a friendID and the user trying to remove the friends request
+    removeFriendRequestFromDB(res, userID, friendID)
+
+})
+
+app.post('/upload-scorecard', (req, res) => {
+    const data = req.body
+    console.log(data)
+    const base64encodedImageData = data.image_data
+    const userID = data.userID
+    if(base64encodedImageData && userID){
+        if (!checkUploadScoreCardData(base64encodedImageData, userID)){
+            return res.status(400).json({error: "INVALID JSON BODY"})
+        }
+    }
+    else{
+        return res.status(400).json({error : "MISSING JSON BODY MEMBERS"})
+    }
+    const imageBuffer = Buffer.from(base64encodedImageData, 'base64');
+    db_conn.run(`INSERT INTO Scorecards (img, Golfer_ID) VALUES (?, ?)`, [imageBuffer, userID], function(err) {
+        if (err) {
+            console.error("Error uploading scorecard", err.message);
+            return res.status(500).json({ error: "An error occurred while uploading your scorecard." });
+        }
+
+        console.log("Scorecard successfully uploaded.");
+        return res.status(200).send()
+    });
+    
+})
+function checkUploadScoreCardData(image_data, id){
+    return checkID(id)
+}
+
+
+
+
+
 function removeFriendRequestFromDB(res, userID, friendID){
     // SQL query to delete the entry
     const query = `DELETE FROM GolferSendsFriendRequest WHERE ReceivingGolferID = ? AND RequestingGolferID = ?`;
@@ -292,31 +341,12 @@ function removeFriendRequestFromDB(res, userID, friendID){
 }
 
 
-app.post('/decline-friend-request', (req, res) => {
-    const data = req.body
-    console.log("recieved", data)
-    if(!data.userID && data.friendID){
-        return res.status(400).json({error : "MISSING ID"})
-    }
-    const userID = data.userID
-    const friendID = data.friendID
-    if(!(checkID(userID) && checkID(friendID))){
-        return res.status(400).json({error : "ERROR CHECKING ID"})
-    }
-    //when we get here we have a userID and a friendID and the user trying to remove the friends request
-    removeFriendRequestFromDB(res, userID, friendID)
 
-})
 function checkID(id){
     if(typeof id == 'number' && id > -1) return true
     else return false
     
 }
-
-
-
-
-
 
 
 
