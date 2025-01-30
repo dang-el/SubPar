@@ -107,7 +107,7 @@ struct MainView: View {
                 case "SocialView":
                     SocialView(navigationPath: $navigationPath)
                         .environmentObject(userAuth)
-                case "ScorecardsView" : ScorecardsView(navigationPath: $navigationPath)
+                case "ScorecardsView" : ScorecardsView(navigationPath: $navigationPath, userAuth: userAuth)
                         .environmentObject(userAuth)
                     
                 default:

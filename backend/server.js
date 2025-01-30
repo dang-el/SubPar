@@ -287,7 +287,7 @@ app.post('/decline-friend-request', (req, res) => {
 
 })
 
-app.post('/upload-scorecard', (req, res) => {
+app.post('/scorecards/upload', (req, res) => {
     const data = req.body
     console.log(data)
     const base64encodedImageData = data.image_data
@@ -312,13 +312,64 @@ app.post('/upload-scorecard', (req, res) => {
     });
     
 })
-function checkUploadScoreCardData(image_data, id){
-    return checkID(id)
-}
+app.post('/scorecards/retrieve', async (req, res) => {
+    const data = req.body;
+    console.log("Received Data:", data);
+    
 
+    if (!checkID(data.userID)) {
+        return res.status(400).json({ success: false, message: "Invalid userID" });
+    }
 
+    const offset = Number.isInteger(data.page_num) ? data.page_num : 0;
 
+    try {
+        // Ensure db_conn.all() is properly awaited using a Promise
+        const scorecards = await new Promise((resolve, reject) => {
+            db_conn.all(
+                'SELECT Scorecards.Scorecard_ID, Scorecards.img FROM Scorecards WHERE Scorecards.Golfer_ID = ? LIMIT ? OFFSET ?;',
+                [data.userID, 10, offset],
+                (err, rows) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                }
+            );
+        });
 
+        console.log("Fetched Scorecards:", scorecards);
+
+        if (!Array.isArray(scorecards) || scorecards.length === 0) {
+            return res.status(404).json({ success: false, message: "No scorecards found" });
+        }
+
+        const scorecardsBase64 = scorecards.map(scorecard => {
+            if (!scorecard.img) {
+                return { id: scorecard.Scorecard_ID, imageBase64: null };
+            }
+
+            try {
+                return {
+                    Scorecard_ID: scorecard.Scorecard_ID,
+                    img: Buffer.isBuffer(scorecard.img) 
+                        ? scorecard.img.toString('base64') 
+                        : Buffer.from(scorecard.img).toString('base64')
+                };
+            } catch (error) {
+                console.error("Failed to convert image to base64:", error);
+                return { id: scorecard.Scorecard_ID, imageBase64: null };
+            }
+        });
+
+        return res.json(scorecardsBase64);
+
+    } catch (error) {
+        console.error("Database query failed:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
 
 function removeFriendRequestFromDB(res, userID, friendID){
     // SQL query to delete the entry

@@ -12,7 +12,7 @@ import PhotosUI
 class UploadScorecardViewModel: ObservableObject {
     @Published var selectedItem: PhotosPickerItem?
     @Published var selectedImage: UIImage?
-
+        
     
     
     
@@ -37,7 +37,7 @@ class UploadScorecardViewModel: ObservableObject {
                 print("Error with json data")
                 throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error serializing JSON"])
             }
-            guard let url = URL(string: "http://127.0.0.1:6000/upload-scorecard") else {
+            guard let url = URL(string: "http://127.0.0.1:6000/scorecards/upload") else {
                 print("Error getting url")
                 throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
             }

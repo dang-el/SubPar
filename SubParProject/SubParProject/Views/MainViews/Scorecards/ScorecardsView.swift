@@ -10,6 +10,13 @@ import SwiftUI
 struct ScorecardsView: View {
     @Binding var navigationPath: NavigationPath
     @EnvironmentObject var userAuth : UserAuth
+    @ObservedObject var viewModel : ScorecardsViewModel
+    // Initialize ScorecardsView with UserAuth
+    // Initialize ScorecardsView with UserAuth
+        init(navigationPath: Binding<NavigationPath>, userAuth: UserAuth) {
+            _viewModel = ObservedObject(wrappedValue: ScorecardsViewModel(userAuth: userAuth))
+            _navigationPath = navigationPath
+        }
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors:
@@ -26,6 +33,14 @@ struct ScorecardsView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Spacer()
+                ScorecardViewer(viewModel: viewModel)
+                    .onAppear(){
+                        Task{
+                            try await viewModel.fetchCards()
+                        }
+                    }
+                
+                Spacer()
                 Button("Go Back") {
                     navigationPath.removeLast()
                 }
@@ -39,10 +54,28 @@ struct ScorecardsView: View {
         
     }
 }
+struct ScorecardViewer: View {
+    @ObservedObject var viewModel: ScorecardsViewModel
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .center) {
+                ForEach(viewModel.ScorecardImages, id: \.self) { image in
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 300, height: 300)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.vertical, 10) // Add some space between the images
+                }
+            }
+        }
+    }
+}
 
 struct ScorecardsView_Previews: PreviewProvider {
     static var previews: some View {
-        ScorecardsView(navigationPath: .constant(NavigationPath()))
+        ScorecardsView(navigationPath: .constant(NavigationPath()), userAuth: UserAuth().log_in_user(userID: 1))
             .environmentObject(UserAuth().log_in_user(userID: 1))
     }
 }
