@@ -10,7 +10,7 @@ import SwiftUI
 import PhotosUI
 
 class UploadScorecardViewModel: ObservableObject {
-    @Published var selectedItem: PhotosPickerItem?
+    @Published var selectedItem: PhotosPickerItem? = nil
     @Published var selectedImage: UIImage?
         
     

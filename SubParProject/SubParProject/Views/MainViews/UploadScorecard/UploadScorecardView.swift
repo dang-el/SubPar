@@ -12,7 +12,7 @@ import PhotosUI
 
 struct PhotoPickerView: View {
     
-    @ObservedObject var viewModel: UploadScorecardViewModel
+    @StateObject var viewModel: UploadScorecardViewModel
     @EnvironmentObject var userAuth : UserAuth
     var body: some View {
         VStack(spacing: 50) {
@@ -61,14 +61,25 @@ struct PhotoPickerView: View {
                     .cornerRadius(10)
             }
             .onChange(of: viewModel.selectedItem) { newItem in
-                // Handle the selection
+                guard let newItem = newItem else { return }
+                
                 Task {
-                    if let data = try? await newItem?.loadTransferable(type: Data.self),
-                       let uiImage = UIImage(data: data) {
-                        viewModel.selectedImage = uiImage
+                    do {
+                        if let data = try await newItem.loadTransferable(type: Data.self),
+                           let uiImage = UIImage(data: data) {
+                            // Ensure UI updates happen on the main thread
+                            await MainActor.run {
+                                viewModel.selectedImage = uiImage
+                            }
+                        } else {
+                            print("Failed to load image data")
+                        }
+                    } catch {
+                        print("Error loading image: \(error.localizedDescription)")
                     }
                 }
             }
+
         }
         .padding()
     }
@@ -77,7 +88,7 @@ struct PhotoPickerView: View {
 struct UploadScorecardView: View {
     @Binding var navigationPath: NavigationPath
     @EnvironmentObject var userAuth : UserAuth
-    let viewModel : UploadScorecardViewModel = UploadScorecardViewModel()
+    @StateObject var viewModel : UploadScorecardViewModel = UploadScorecardViewModel()
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors:

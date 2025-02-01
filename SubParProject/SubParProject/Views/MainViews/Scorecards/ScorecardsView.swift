@@ -68,7 +68,7 @@ struct ScorecardViewer: View {
                             Text("No scorecards available")
                                 .foregroundColor(.gray)
                         } else {
-                            ForEach(viewModel.ScorecardImages, id: \.self) { image in
+                            ForEach(viewModel.ScorecardImages.reversed(), id: \.self) { image in
                                 Image(uiImage: image)
                                     .resizable()
                                     .scaledToFit()
