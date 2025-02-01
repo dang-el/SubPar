@@ -51,6 +51,7 @@ struct ScorecardsView: View {
             }
             
         }
+        .navigationBarBackButtonHidden(true)
         
     }
 }
@@ -59,17 +60,25 @@ struct ScorecardViewer: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .center) {
-                ForEach(viewModel.ScorecardImages, id: \.self) { image in
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 300, height: 300)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(.vertical, 10) // Add some space between the images
+                    VStack(alignment: .center) {
+                        if viewModel.isLoading {
+                            ProgressView("Loading Scorecards...")
+                                .padding()
+                        } else if viewModel.ScorecardImages.isEmpty {
+                            Text("No scorecards available")
+                                .foregroundColor(.gray)
+                        } else {
+                            ForEach(viewModel.ScorecardImages, id: \.self) { image in
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 300, height: 300)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding(.vertical, 10)
+                            }
+                        }
+                    }
                 }
-            }
-        }
     }
 }
 

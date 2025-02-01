@@ -312,6 +312,9 @@ app.post('/scorecards/upload', (req, res) => {
     });
     
 })
+function checkUploadScoreCardData(base64encodedImageData, userID){
+    return true
+}
 app.post('/scorecards/retrieve', async (req, res) => {
     const data = req.body;
     console.log("Received Data:", data);

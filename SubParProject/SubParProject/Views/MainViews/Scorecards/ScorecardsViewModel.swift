@@ -21,8 +21,12 @@ final class ScorecardsViewModel : ObservableObject {
     var userAuth: UserAuth?
 
         // Initialize with UserAuth
+    // Initialize with UserAuth
         init(userAuth: UserAuth? = nil) {
             self.userAuth = userAuth
+            Task {
+                try? await fetchCards()
+            }
         }
     
     
@@ -61,9 +65,10 @@ final class ScorecardsViewModel : ObservableObject {
 
             // Update the UI on the main thread
             DispatchQueue.main.async {
-                self.Scorecards = scorecards
-                self.isLoading = false // Stop loading once the data is fetched
-            }
+                            self.Scorecards = scorecards
+                            self.scorecardsToScorecardImages() // Ensure images update after scorecards are set
+                            self.isLoading = false
+                        }
             print("Fetched Scorecards")
 
         } catch {
@@ -74,7 +79,6 @@ final class ScorecardsViewModel : ObservableObject {
             throw error
         }
         self.isMore = isMoreScorecards()
-        scorecardsToScorecardImages()
     }
     
     
