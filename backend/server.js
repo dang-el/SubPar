@@ -343,7 +343,7 @@ app.post('/scorecards/retrieve', async (req, res) => {
         });
 
         console.log("Fetched Scorecards:", scorecards);
-
+        //possibly zip images and then send the zip back in http response to be unzipped
         if (!Array.isArray(scorecards) || scorecards.length === 0) {
             return res.status(404).json({ success: false, message: "No scorecards found" });
         }
