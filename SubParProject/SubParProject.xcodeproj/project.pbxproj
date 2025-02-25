@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7C021B892D3F7CEF00517F23 /* AddedMeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C021B882D3F7CEF00517F23 /* AddedMeView.swift */; };
 		7C021B8B2D42BA2B00517F23 /* AddFriendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C021B8A2D42BA2B00517F23 /* AddFriendsViewModel.swift */; };
+		7C137BE62D5AA254004E7EAC /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C137BE52D5AA254004E7EAC /* SettingsView.swift */; };
+		7C137BE82D5AA53E004E7EAC /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C137BE72D5AA53E004E7EAC /* SettingsViewModel.swift */; };
 		7C16DAB72D3236160097BFDB /* StrokeCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C16DAB62D3236160097BFDB /* StrokeCounterView.swift */; };
 		7C16DAB92D3236330097BFDB /* StrokeHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C16DAB82D3236330097BFDB /* StrokeHistoryView.swift */; };
 		7C16DABC2D3236630097BFDB /* UploadScorecardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C16DABB2D3236630097BFDB /* UploadScorecardView.swift */; };
@@ -62,6 +64,8 @@
 /* Begin PBXFileReference section */
 		7C021B882D3F7CEF00517F23 /* AddedMeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddedMeView.swift; sourceTree = "<group>"; };
 		7C021B8A2D42BA2B00517F23 /* AddFriendsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendsViewModel.swift; sourceTree = "<group>"; };
+		7C137BE52D5AA254004E7EAC /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7C137BE72D5AA53E004E7EAC /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		7C16DAB62D3236160097BFDB /* StrokeCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeCounterView.swift; sourceTree = "<group>"; };
 		7C16DAB82D3236330097BFDB /* StrokeHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeHistoryView.swift; sourceTree = "<group>"; };
 		7C16DABB2D3236630097BFDB /* UploadScorecardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadScorecardView.swift; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 		7C16DAB52D3235CD0097BFDB /* MainViews */ = {
 			isa = PBXGroup;
 			children = (
+				7C1732932D5AA17900A228F3 /* Settings */,
 				7CA8A2E12D485CBB0001A95A /* Scorecards */,
 				7CE9F3E62D3F69F500BEC8D5 /* Social */,
 				7C7F42992D3CD5F900E9A812 /* UploadScorecard */,
@@ -145,10 +150,18 @@
 			path = MainViews;
 			sourceTree = "<group>";
 		};
+		7C1732932D5AA17900A228F3 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				7C137BE52D5AA254004E7EAC /* SettingsView.swift */,
+				7C137BE72D5AA53E004E7EAC /* SettingsViewModel.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		7C3BFBDF2C8F6A9B00F7F369 = {
 			isa = PBXGroup;
 			children = (
-				7C6D71A72D32349C0090B5AA /* New Group */,
 				7C3BFBEA2C8F6A9B00F7F369 /* SubParProject */,
 				7C3BFBFB2C8F6A9E00F7F369 /* SubParProjectTests */,
 				7C3BFC052C8F6A9E00F7F369 /* SubParProjectUITests */,
@@ -227,13 +240,6 @@
 				7C3BFBED2C8F6A9B00F7F369 /* HomeView.swift */,
 			);
 			path = HomeView;
-			sourceTree = "<group>";
-		};
-		7C6D71A72D32349C0090B5AA /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		7C7F42992D3CD5F900E9A812 /* UploadScorecard */ = {
@@ -484,6 +490,7 @@
 				7CFCECCF2CB62F9C00359D20 /* SignupViewModel.swift in Sources */,
 				7C32472D2CA36DAE00A26CC7 /* SignupView.swift in Sources */,
 				7C456C0D2D34CEB000F170BF /* RecordStrokeView.swift in Sources */,
+				7C137BE82D5AA53E004E7EAC /* SettingsViewModel.swift in Sources */,
 				7C021B892D3F7CEF00517F23 /* AddedMeView.swift in Sources */,
 				7C3BFBEE2C8F6A9B00F7F369 /* HomeView.swift in Sources */,
 				7CA8A2E32D485CD60001A95A /* ScorecardsView.swift in Sources */,
@@ -497,6 +504,7 @@
 				7C16DAB92D3236330097BFDB /* StrokeHistoryView.swift in Sources */,
 				7C3BFBEC2C8F6A9B00F7F369 /* SubParProjectApp.swift in Sources */,
 				7C16DAB72D3236160097BFDB /* StrokeCounterView.swift in Sources */,
+				7C137BE62D5AA254004E7EAC /* SettingsView.swift in Sources */,
 				7CE0F47D2CB6FD0700094A39 /* LoginViewModel.swift in Sources */,
 				7CEACB062D3A497100A1B54B /* StrokeHistoryViewModel.swift in Sources */,
 				7C9570542D3F7754005EC722 /* AddFriendsView.swift in Sources */,

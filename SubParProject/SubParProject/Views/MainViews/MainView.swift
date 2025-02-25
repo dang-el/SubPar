@@ -23,6 +23,7 @@ struct MainView: View {
                     HStack {
                         Button {
                             print("Button clicked... CURRENT LOGGED IN USER_ID: \(userAuth.get_userID() ?? -1)")
+                            navigationPath.append("SettingsView")
                         } label: {
                             Image("golf_ball_icon")
                                 .resizable()
@@ -109,7 +110,9 @@ struct MainView: View {
                         .environmentObject(userAuth)
                 case "ScorecardsView" : ScorecardsView(navigationPath: $navigationPath, userAuth: userAuth)
                         .environmentObject(userAuth)
-                    
+                case "SettingsView" :
+                    SettingsView(navigationPath: $navigationPath)
+                        .environmentObject(userAuth)
                 default:
                     Text("Unknown Destination")
                 }

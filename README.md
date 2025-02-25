@@ -170,3 +170,8 @@ Either the User did not enter the correct username and email or password or the 
 
 if a user is added as a friend a friend reqest can be sent to them again.
 this needs to be fixed
+
+when the user searches to add new friends the friends that the user currently has should not come up.
+
+
+there should also be a way for the user to select on and delete a friend that they have accepted a request for

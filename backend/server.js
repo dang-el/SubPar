@@ -313,7 +313,7 @@ app.post('/scorecards/upload', (req, res) => {
     
 })
 function checkUploadScoreCardData(base64encodedImageData, userID){
-    return true
+    return checkID(userID)
 }
 app.post('/scorecards/retrieve', async (req, res) => {
     const data = req.body;
@@ -374,6 +374,73 @@ app.post('/scorecards/retrieve', async (req, res) => {
     }
 });
 
+app.post('/golfer/info', async (req, res) => {
+    const data = req.body;
+    console.log("Received request:", data);
+
+    if (!checkID(data.UserID)) {
+        return res.status(400).json({ error: "MISSING USERID" });
+    }
+
+    db_conn.get(
+        `SELECT Golfers.Username, Golfers.Email, Golfers.Phone_Number FROM Golfers WHERE Golfers.Golfer_ID = ?;`,
+        [data.UserID],
+        async (err, row) => { // Make the callback async
+            if (err) {
+                return res.status(400).json({ error: "COULD NOT RECEIVE GOLFER INFO FROM SERVER" });
+            }
+            if (!row) {
+                return res.status(400).json({ error: "GOLFER DOES NOT EXIST" });
+            }
+
+            try {
+                const isAdmin = await isAdministrator(data.UserID); // Await the Promise
+                const isEst = await isEstablishment(data.UserID);  // Await the Promise
+
+                const response = { user: row, isAdministrator: isAdmin, isEstablishment: isEst };
+                console.log("✅ Sending response:", response);
+
+                return res.status(200).json(response);
+            } catch (error) {
+                return res.status(500).json({ error: "DATABASE ERROR", details: error.message });
+            }
+        }
+    );
+});
+
+function isAdministrator(user_id) {
+    return new Promise((resolve, reject) => {
+        db_conn.get(
+            `SELECT 1 FROM Administrators WHERE Administrators.Golfer_ID = ?;`,
+            [user_id],
+            (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row ? true : false); // Ensure it returns a Boolean
+                }
+            }
+        );
+    });
+}
+
+function isEstablishment(user_id) {
+    return new Promise((resolve, reject) => {
+        db_conn.get(
+            `SELECT 1 FROM Establishments WHERE Establishments.Golfer_ID = ?;`,
+            [user_id],
+            (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row ? true : false); // Ensure it returns a Boolean
+                }
+            }
+        );
+    });
+}
+
+
 function removeFriendRequestFromDB(res, userID, friendID){
     // SQL query to delete the entry
     const query = `DELETE FROM GolferSendsFriendRequest WHERE ReceivingGolferID = ? AND RequestingGolferID = ?`;
@@ -397,7 +464,7 @@ function removeFriendRequestFromDB(res, userID, friendID){
 
 
 function checkID(id){
-    if(typeof id == 'number' && id > -1) return true
+    if(id && typeof id == 'number' && id > -1) return true
     else return false
     
 }
@@ -440,6 +507,7 @@ function checkRating(rating){
 }
 
 
+//need to only gather the IDS of the golfers the player is not currently friends with
 function getGolfersOfNameFromDB(friendsName, res){
     const query = "SELECT Golfer_ID, Golfers.Username FROM Golfers WHERE Golfers.Username LIKE ?";
     const searchTerm = `%${friendsName}%`; // Add '%' to friendsName before passing it as a parameter
