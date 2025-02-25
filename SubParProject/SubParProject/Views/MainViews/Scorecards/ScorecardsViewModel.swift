@@ -7,8 +7,8 @@
 
 import Foundation
 import UIKit
-
-final class ScorecardsViewModel : ObservableObject {
+@MainActor
+final class ScorecardsViewModel : ObservableObject, Sendable{
     @Published var isLoading: Bool = false
     @Published var pageNum: Int = 0
     @Published var isMore: Bool = false

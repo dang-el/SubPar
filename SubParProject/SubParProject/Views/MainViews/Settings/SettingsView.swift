@@ -45,7 +45,8 @@ struct SettingsView: View {
             case .changePassword:
                 ChangePasswordView(navigationPath: $navigationPath, viewModel: viewModel)
             case .applyChanges:
-                ApplyChangesView()
+                ApplyChangesView(navigationPath: $navigationPath, viewModel: viewModel)
+                    .environmentObject(userAuth)
             case .adminView:
                 AdministratorView()
             case .establishmentView:
@@ -215,11 +216,7 @@ struct EditUserInfoView : View{
         
 }
 
-struct ApplyChangesView : View{
-    var body : some View {
-        Text("Apply Changes View")
-    }
-}
+
            
 
 

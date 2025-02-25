@@ -27,6 +27,7 @@
 		7C4188F92D6D8A84002596BC /* EstablishmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4188F82D6D8A84002596BC /* EstablishmentsView.swift */; };
 		7C4188FB2D6D8AE9002596BC /* AdministratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4188FA2D6D8AE9002596BC /* AdministratorView.swift */; };
 		7C4188FD2D6D9196002596BC /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4188FC2D6D9196002596BC /* ChangePasswordView.swift */; };
+		7C4188FF2D6D9E73002596BC /* ApplyChangesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4188FE2D6D9E73002596BC /* ApplyChangesView.swift */; };
 		7C456C0A2D34CACE00F170BF /* StrokeCounterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */; };
 		7C456C0D2D34CEB000F170BF /* RecordStrokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */; };
 		7C456C0F2D34DE1C00F170BF /* RecordStrokeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */; };
@@ -88,6 +89,7 @@
 		7C4188F82D6D8A84002596BC /* EstablishmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstablishmentsView.swift; sourceTree = "<group>"; };
 		7C4188FA2D6D8AE9002596BC /* AdministratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdministratorView.swift; sourceTree = "<group>"; };
 		7C4188FC2D6D9196002596BC /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordView.swift; sourceTree = "<group>"; };
+		7C4188FE2D6D9E73002596BC /* ApplyChangesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyChangesView.swift; sourceTree = "<group>"; };
 		7C456C092D34CACE00F170BF /* StrokeCounterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeCounterViewModel.swift; sourceTree = "<group>"; };
 		7C456C0C2D34CEB000F170BF /* RecordStrokeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordStrokeView.swift; sourceTree = "<group>"; };
 		7C456C0E2D34DE1C00F170BF /* RecordStrokeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordStrokeViewModel.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				7C4188F82D6D8A84002596BC /* EstablishmentsView.swift */,
 				7C4188FA2D6D8AE9002596BC /* AdministratorView.swift */,
 				7C4188FC2D6D9196002596BC /* ChangePasswordView.swift */,
+				7C4188FE2D6D9E73002596BC /* ApplyChangesView.swift */,
 			);
 			path = SettingsSubViews;
 			sourceTree = "<group>";
@@ -505,6 +508,7 @@
 				7C8CA7602D3CD86C00F023A8 /* UploadScorecardViewModel.swift in Sources */,
 				7C4188FD2D6D9196002596BC /* ChangePasswordView.swift in Sources */,
 				7CFCECD72CB6375000359D20 /* NavigationManagerViewModel.swift in Sources */,
+				7C4188FF2D6D9E73002596BC /* ApplyChangesView.swift in Sources */,
 				7CFCECCF2CB62F9C00359D20 /* SignupViewModel.swift in Sources */,
 				7C32472D2CA36DAE00A26CC7 /* SignupView.swift in Sources */,
 				7C456C0D2D34CEB000F170BF /* RecordStrokeView.swift in Sources */,
@@ -693,6 +697,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SubParProject/Preview Content\"";
+				DEVELOPMENT_TEAM = YYPX3HV8F5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -721,6 +726,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SubParProject/Preview Content\"";
+				DEVELOPMENT_TEAM = YYPX3HV8F5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

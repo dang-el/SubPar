@@ -10,13 +10,15 @@ import Foundation
 final class SettingsViewModel : ObservableObject, Sendable {
     @Published var golferUsername = ""
     @Published var golferPhoneNumber = ""
-    @Published var newPhoneNumber = ""
     @Published var golferEmail = ""
+    @Published var newPhoneNumber = ""
     @Published var newEmail = ""
     @Published var newPassword = ""
     @Published var newUsername = ""
     @Published var isAdministrator = false // will update after the view is first rendered and an api call is made
     @Published var isEstablishmemnt = false // will update after the view is first rendered and an api call is made
+    @Published var wasFetched = false
+    @Published var applyChangesResponse = ""
     enum SettingsDestination: Hashable {
         case changePassword
         case applyChanges
@@ -32,13 +34,6 @@ final class SettingsViewModel : ObservableObject, Sendable {
         var Username : String
         var Email : String
         var Phone_Number : String
-    }
-    
-    func changePassword() -> Bool{
-        if(newPassword == ""){
-            return false
-        }
-        return false//return true when password was changed
     }
     func getUserInformation(userAuth: UserAuth) async {
         print("getUserInformation() CALLED")
@@ -84,15 +79,16 @@ final class SettingsViewModel : ObservableObject, Sendable {
                 }
                 self.isAdministrator = userResp.isAdministrator
                 self.isEstablishmemnt = userResp.isEstablishment
-                 
+                self.wasFetched = true
             }
 
         } catch {
             print("❌ Error in getUserInformation():", error)
         }
     }
-    func applyChanges(){
+    func applyChanges(userAuth : UserAuth){
         print("new username \(self.newUsername) new email \(self.newEmail) new phone number \(self.newPhoneNumber)")
+        //need to send this data to the server to attempt to change the current users data. need to return message to set to applyChangesResponse
     }
 
 }
