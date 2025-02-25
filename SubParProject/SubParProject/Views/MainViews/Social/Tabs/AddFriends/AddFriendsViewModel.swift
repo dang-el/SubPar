@@ -1,7 +1,7 @@
 import Foundation
-
-final class AddFriendsViewModel: ObservableObject {
-    struct GolferResponse: Codable, Hashable {
+@MainActor
+final class AddFriendsViewModel: ObservableObject, Sendable {
+    struct GolferResponse: Codable, Hashable, Sendable {
         var Golfer_ID : Int
         var Username: String
     }

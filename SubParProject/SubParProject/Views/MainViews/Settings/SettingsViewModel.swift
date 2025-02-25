@@ -6,8 +6,8 @@
 //
 
 import Foundation
-
-final class SettingsViewModel : ObservableObject {
+@MainActor
+final class SettingsViewModel : ObservableObject, Sendable {
     @Published var golferUsername = ""
     @Published var golferPhoneNumber = ""
     @Published var newPhoneNumber = ""
@@ -17,6 +17,12 @@ final class SettingsViewModel : ObservableObject {
     @Published var newUsername = ""
     @Published var isAdministrator = false // will update after the view is first rendered and an api call is made
     @Published var isEstablishmemnt = false // will update after the view is first rendered and an api call is made
+    enum SettingsDestination: Hashable {
+        case changePassword
+        case applyChanges
+        case adminView
+        case establishmentView
+    }
     struct UserResponse : Codable {
         var user : SignedInUser
         var isAdministrator : Bool
@@ -84,6 +90,9 @@ final class SettingsViewModel : ObservableObject {
         } catch {
             print("❌ Error in getUserInformation():", error)
         }
+    }
+    func applyChanges(){
+        print("new username \(self.newUsername) new email \(self.newEmail) new phone number \(self.newPhoneNumber)")
     }
 
 }

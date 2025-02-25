@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
+
     @Binding var navigationPath: NavigationPath
     @EnvironmentObject var userAuth : UserAuth
     @StateObject var viewModel : SettingsViewModel = SettingsViewModel()
@@ -27,7 +29,7 @@ struct SettingsView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Spacer()
-                EditUserInfoView(viewModel: viewModel, userAuth: userAuth)
+                EditUserInfoView(navigationPath: $navigationPath, viewModel: viewModel, userAuth: userAuth)
                 Spacer()
                 StyledButton(title: "Go Back", isPrimary: true) {
                     navigationPath.removeLast()
@@ -38,92 +40,168 @@ struct SettingsView: View {
             .padding()
         }
         .navigationBarBackButtonHidden(true)
-        
+        .navigationDestination(for: SettingsViewModel.SettingsDestination.self) { destination in
+            switch destination {
+            case .changePassword:
+                ChangePasswordView(navigationPath: $navigationPath, viewModel: viewModel)
+            case .applyChanges:
+                ApplyChangesView()
+            case .adminView:
+                AdministratorView()
+            case .establishmentView:
+                EstablishmentsView()
+            }
+        }
     }
 }
-struct DoB_View : View {
-    var body: some View {
-        EmptyView()
-    }
-}
+
 struct EditUserInfoView : View{
+    @Binding var navigationPath: NavigationPath
     @StateObject var viewModel : SettingsViewModel
     @StateObject var userAuth : UserAuth
-    var body: some View{
-        VStack(){
-            HStack(){
-                Spacer()
-                Text("Change Username")
-                    .fontWeight(.bold)
+    struct ChangeUsernameView : View {
+        @StateObject var viewModel : SettingsViewModel
+        var body : some View{
+            VStack{
+                HStack(){
+                    Spacer()
+                    Text("Change Username")
+                        .fontWeight(.bold)
+                }
+                HStack{
+                    Text(viewModel.golferUsername)
+                        .fontWeight(.bold)
+                    Spacer()
+                    TextField(viewModel.golferUsername, text: $viewModel.newUsername)
+                        .frame(width: 165)
+                        .textInputAutocapitalization(.never)
+                }
             }
-            HStack{
-                Text(viewModel.golferUsername)
-                    .fontWeight(.bold)
-                Spacer()
-                TextField(viewModel.golferUsername, text: $viewModel.newUsername)
-                    .frame(width: 165)
-            }
-            .padding(.top, 15)
-            
-            StyledButton(title: "Change Password", isPrimary: false) {
-                print("NAVIGATE TO CHANGE PASSWORD PAGE")
-            }
-            .padding(.top, 25)
-            .frame(width: 255)
-            HStack(){
-                Spacer()
-                Text("Change Email")
-                    .fontWeight(.bold)
-            }
-            .padding(.top, 15)
-            HStack{
-                Text(viewModel.golferEmail)
-                    .fontWeight(.bold)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                Spacer()
-                TextField(viewModel.golferEmail, text: $viewModel.newEmail)
-                    .frame(width: 165)
-            }
-            .padding(.top, 15)
-            HStack(){
-                Spacer()
-                Text("Change Phone Number")
-                    .fontWeight(.bold)
-            }
-            .padding(.top, 15)
-            HStack{
-                Text(viewModel.golferPhoneNumber)
-                    .fontWeight(.bold)
-                Spacer()
-                TextField(viewModel.golferPhoneNumber, text: $viewModel.newPhoneNumber)
-                    .frame(width: 165)
-            }
-            .padding(.top, 15)
-            DoB_View()//date picker to upload or change your birthday/ birthdays arent assigned in user signup and can only be added here
-            StyledButton(title: "Apply Changes", isPrimary: false) {
-                print("Show user data impending change and ask to type confirm")
-            }
-            .padding(.top, 25)
-            .frame(width: 255)
-            StyledButton(title: "Establishments", isPrimary: false) {
-                print("Navigating to Establisments page ")
-            }
-            .padding(.top, 55)
-            .frame(width: 255)
-            Spacer()
-            if(viewModel.isAdministrator){
-                StyledButton(title: "Admin") {
-                    //if you are an admin the button will be able to be clicked. otherwise this button cannot be selected
-                    print("Navigating to Administration View")
+        }
+    }
+    struct ChangePasswordView : View {
+        @Binding var navigationPath: NavigationPath
+        @StateObject var viewModel : SettingsViewModel
+        var body : some View{
+            VStack{
+                HStack(){
+                    Spacer()
+                    Text("Change Password")
+                        .fontWeight(.bold)
+                }
+                StyledButton(title: "Change Password", isPrimary: false) {
+                    print("NAVIGATE TO CHANGE PASSWORD PAGE")
+                    navigationPath.append(SettingsViewModel.SettingsDestination.changePassword)
                 }
                 .frame(width: 255)
+                
+                HStack{
+                    if(viewModel.newPassword == ""){
+                        Text("No New Password")
+                            .fontWeight(.bold)
+                    }
+                    else{
+                        Text(viewModel.newPassword)
+                            .fontWeight(.bold)
+                    }
+                    Spacer()
+                    Text("New Password")
+                        .bold()
+                }
             }
-            else{
-                EmptyView()
+        }
+    }
+    struct ChangeEmailView : View {
+        @StateObject var viewModel : SettingsViewModel
+        var body : some View{
+            VStack{
+                HStack(){
+                    Spacer()
+                    Text("Change Email")
+                        .fontWeight(.bold)
+                }
+                .padding(.top, 15)
+                HStack{
+                    Text(viewModel.golferEmail)
+                        .fontWeight(.bold)
+                    Spacer()
+                    TextField(viewModel.golferEmail, text: $viewModel.newEmail)
+                        .frame(width: 165)
+                        .textInputAutocapitalization(.never)
+                }
             }
+        }
+    }
+    struct ChangePhoneNumberView : View {
+        @StateObject var viewModel : SettingsViewModel
+        var body : some View{
+            VStack{
+                HStack(){
+                    Spacer()
+                    Text("Change Phone Number")
+                        .fontWeight(.bold)
+                }
+                .padding(.top, 15)
+                HStack{
+                    Text(viewModel.golferPhoneNumber)
+                        .fontWeight(.bold)
+                    Spacer()
+                    TextField(viewModel.golferPhoneNumber, text: $viewModel.newPhoneNumber)
+                        .frame(width: 165)
+                }
+            }
+        }
+    }
+    struct ButtonView : View {
+        @Binding var navigationPath: NavigationPath
+        @StateObject var viewModel : SettingsViewModel
+        var body : some View {
+            VStack(spacing: 55) {
+                StyledButton(title: "Apply Changes", isPrimary: false) {
+                    print("Show user data impending change and ask to type confirm")
+                    navigationPath.append(SettingsViewModel.SettingsDestination.applyChanges)
+                    //viewModel.applyChanges()
+                }
+                
+                .frame(width: 255)
+                StyledButton(title: "Establishments", isPrimary: false) {
+                    print("Navigating to Establisments page ")
+                    navigationPath.append(SettingsViewModel.SettingsDestination.establishmentView)
+                }
+
+                .frame(width: 255)
+                
+                if(viewModel.isAdministrator){
+                    StyledButton(title: "Admin") {
+                        //if you are an admin the button will be able to be clicked. otherwise this button cannot be selected
+                        print("Navigating to Administration View")
+                        navigationPath.append(SettingsViewModel.SettingsDestination.adminView)
+                    }
+                    .frame(width: 255)
+                }
+                else{
+                    EmptyView()
+                }
+            }
+        }
+    }
+    var body: some View{
+        VStack(){
+            ChangeUsernameView(viewModel: viewModel)
+                .padding(.top, 15)
             
-            Spacer()
+            ChangePasswordView(navigationPath: $navigationPath, viewModel: viewModel)
+                .padding(.top, 15)
+            
+            ChangeEmailView(viewModel: viewModel)
+                .padding(.top, 15)
+            
+            ChangePhoneNumberView(viewModel: viewModel)
+                .padding(.top, 15)
+            
+            ButtonView(navigationPath: $navigationPath, viewModel: viewModel)
+                .padding(.top, 15)
+            
 
         }
         .padding(.top, 30)
@@ -137,9 +215,21 @@ struct EditUserInfoView : View{
         
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView(navigationPath: .constant(NavigationPath()))
-            .environmentObject(UserAuth().log_in_user(userID: 1))
+struct ApplyChangesView : View{
+    var body : some View {
+        Text("Apply Changes View")
     }
 }
+           
+
+
+#Preview{
+    SettingsView(navigationPath: .constant(NavigationPath()))
+                .environmentObject(UserAuth().log_in_user(userID: 1))
+}
+//struct SettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsView(navigationPath: .constant(NavigationPath()))
+//            .environmentObject(UserAuth().log_in_user(userID: 1))
+//    }
+//}
