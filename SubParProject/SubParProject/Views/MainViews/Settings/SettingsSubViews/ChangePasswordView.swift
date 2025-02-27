@@ -35,7 +35,7 @@ struct ChangePasswordView : View{
                 }
                 else{
                     Text(message)
-                        .padding(.top, 125)
+                        .padding(.top, 10)
                 }
 
                 VStack(spacing: 90){

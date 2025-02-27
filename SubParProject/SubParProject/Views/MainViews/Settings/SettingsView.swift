@@ -28,7 +28,7 @@ struct SettingsView: View {
                 Text("Settings")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Spacer()
+                
                 EditUserInfoView(navigationPath: $navigationPath, viewModel: viewModel, userAuth: userAuth)
                 Spacer()
                 StyledButton(title: "Go Back", isPrimary: true) {

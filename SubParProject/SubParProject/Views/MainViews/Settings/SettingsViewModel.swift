@@ -35,9 +35,10 @@ final class SettingsViewModel : ObservableObject, Sendable {
         var Email : String
         var Phone_Number : String
     }
+    struct ApplyChangesResponse : Codable {
+        var message : String
+    }
     func getUserInformation(userAuth: UserAuth) async {
-        print("getUserInformation() CALLED")
-
         do {
             let jsonBody: [String: Any] = ["UserID": userAuth.get_userID() ?? -1]
             guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonBody, options: []) else {
@@ -86,9 +87,56 @@ final class SettingsViewModel : ObservableObject, Sendable {
             print("❌ Error in getUserInformation():", error)
         }
     }
-    func applyChanges(userAuth : UserAuth){
+    func applyChanges(userAuth : UserAuth)async{
         print("new username \(self.newUsername) new email \(self.newEmail) new phone number \(self.newPhoneNumber)")
         //need to send this data to the server to attempt to change the current users data. need to return message to set to applyChangesResponse
+        
+        do {
+            let jsonBody: [String: Any] = ["UserID": userAuth.get_userID() ?? -1,
+                                           "OldUsername" : self.golferUsername,
+                                           "NewUsername" : self.newUsername,
+                                           "NewPassword" : self.newPassword,
+                                           "NewEmail" : self.newEmail,
+                                           "NewPhoneNumber" : self.newPhoneNumber]
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonBody, options: []) else {
+                print("❌ Error serializing JSON")
+                return
+            }
+
+            guard let url = URL(string: "http://127.0.0.1:6000/golfer/update/information") else {
+                print("❌ Invalid URL")
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+            print("✅ Received response:", response)
+
+            // Ensure response is an HTTPURLResponse
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("❌ Invalid response received")
+                return
+            }
+            if (200...299).contains(httpResponse.statusCode) {
+                print("✅ Success: Status Code \(httpResponse.statusCode)")
+            }
+            else{
+                print("ERROR: STATUS CODE: \(httpResponse.statusCode)")
+            }
+            let applyResp = try JSONDecoder().decode(ApplyChangesResponse.self, from: data)
+            DispatchQueue.main.async {
+                self.applyChangesResponse = applyResp.message;
+            }
+            
+            
+
+        } catch {
+            print("❌ Error in getUserInformation():", error)
+        }
     }
 
 }

@@ -398,7 +398,6 @@ app.post('/golfer/info', async (req, res) => {
                 const isEst = await isEstablishment(data.UserID);  // Await the Promise
 
                 const response = { user: row, isAdministrator: isAdmin, isEstablishment: isEst };
-                console.log("✅ Sending response:", response);
 
                 return res.status(200).json(response);
             } catch (error) {
@@ -407,6 +406,328 @@ app.post('/golfer/info', async (req, res) => {
         }
     );
 });
+app.post('/golfer/update/information', async (req, res) => {
+    const data = req.body;
+    console.log(data);
+    //check if the data is in the body
+    if (!('OldUsername' in req.body) || 
+        !('NewUsername' in req.body) || 
+        !('NewPassword' in req.body) || 
+        !('NewEmail' in req.body) || 
+        !('NewPhoneNumber' in req.body) || 
+        !('UserID' in req.body)) {
+            return res.status(400).json({ message: "Missing required fields in the request body" });
+    }
+    const oldUsername = data.OldUsername;
+    const newUsername = data.NewUsername;
+    const newPassword = data.NewPassword;
+    const newEmail = data.NewEmail;
+    const newPhoneNumber = data.NewPhoneNumber;
+    const userID = data.UserID;
+    //make sure the ID is valid
+    if(!checkID(userID)){
+        return res.status(401).json({message : `USER ID NOT SUPPLIED`});
+    }
+
+    //check the database to see if the username matches the ID so that we for sure have the correct user
+    try{
+        const user = await getGolferNameFromID(userID);
+        if(oldUsername !== user.Username){
+            return res.status(402).json({message : `original username doesnt match User ID.\nPlease try again`})
+        }
+        //check to see if we are updating the username 
+        let updatingUsername = false;
+        let usernameValid = false;
+        if(newUsername !== ""){
+            //we are updating the username
+            updatingUsername = true;
+            //check to see if the username is valid
+            if(check_username(newUsername)){
+                //if the new username that is being provided by the user meets the username requirements
+                usernameValid = true;
+                
+            }
+        }
+        //check to see if we are updating the password
+        let updatingPassword = false;
+        let passwordValid = false;
+        if(newPassword !== ""){
+            //we are updating the password
+            updatingPassword = true;
+            if(check_password(newPassword)){
+                //if the new password that is being provided by the user meets the password requirements
+                passwordValid = true;
+                
+            }
+        }
+        //check to see if we are updating the email
+        let updatingEmail = false;
+        let emailValid = false;
+        if(newEmail !== ""){
+            //we are updating the email
+            updatingEmail = true;
+            if(check_email(newEmail)){
+                //if the new email that is being provided by the user meets the email requirements
+                emailValid = true;
+            }
+        }
+        //check to see if we are updating the email
+        let updatingPhone = false;
+        let phoneValid = false;
+        if(newPhoneNumber !== ""){
+            //we are updating the email
+            updatingPhone = true;
+            if(check_phone(newPhoneNumber)){
+                //if the new phone number that is being provided by the user meets the phone number requirements
+                phoneValid = true;
+            }
+        }
+        let userResult = null;
+        let passwordResult = null;
+        let emailResult = null;
+        let phoneResult = null;
+
+        //call asyncronoyus functions to add database insertion functions to the callback queue
+
+        if(updatingUsername && usernameValid){
+            try{
+                userResult = await updateUsername(userID, newUsername);
+                console.log(userResult);
+            }
+            catch(error){
+                console.log(error);
+            }
+            
+        }
+        if(updatingPassword && passwordValid){
+            try{
+                passwordResult = await updatePassword(userID, newPassword);
+                console.log(passwordResult);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        if(updatingEmail && emailValid){
+            try{
+                emailResult = await updateEmail(userID, newEmail);
+                console.log(emailResult);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        if(updatingPhone && phoneValid){
+            try{
+                phoneResult = await updatePhoneNumber(userID, newPhoneNumber);
+                console.log(phoneResult);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        
+        return res.status(200).json({message : checkGolferUpdateQueryResults(userResult, passwordResult, emailResult, phoneResult, updatingUsername, updatingPassword, updatingEmail, updatingPhone)});
+
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).send()
+    }
+});
+function checkGolferUpdateQueryResults(username, password, email, phone_number, updatingUsername, updatingPassword, updatingEmail, updatingPhone) {
+    let success_message = "Changes made: ";
+    let failure_message = "Requested but not updated: ";
+    let changesMade = false;
+    let failedChanges = false;
+
+    // Check username update
+    if (updatingUsername) { // User requested username change
+        if (username !== null && username.status === 200) {
+            success_message += "Username updated. ";
+            changesMade = true;
+        } else {
+            failure_message += "Username. ";
+            failedChanges = true;
+        }
+    }
+
+    // Check password update
+    if (updatingPassword) { // User requested password change
+        if (password !== null && password.status === 200) {
+            success_message += "Password updated. ";
+            changesMade = true;
+        } else {
+            failure_message += "Password. ";
+            failedChanges = true;
+        }
+    }
+
+    // Check email update
+    if (updatingEmail) { // User requested email change
+        if (email !== null && email.status === 200) {
+            success_message += "Email updated. ";
+            changesMade = true;
+        } else {
+            failure_message += "Email. ";
+            failedChanges = true;
+        }
+    }
+
+    // Check phone number update
+    if (updatingPhone) { // User requested phone number change
+        if (phone_number !== null && phone_number.status === 200) {
+            success_message += "Phone number updated. ";
+            changesMade = true;
+        } else {
+            failure_message += "Phone number. ";
+            failedChanges = true;
+        }
+    }
+
+    // Determine final message
+    if (!changesMade && !failedChanges) {
+        return "No changes were requested.";
+    } else if (!changesMade && failedChanges) {
+        return failure_message.trim();
+    } else if (changesMade && !failedChanges) {
+        return success_message.trim();
+    } else {
+        return success_message.trim() + " " + failure_message.trim();
+    }
+}
+
+
+async function getGolferNameFromID(user_id, oldUsername){
+    if(!checkID(user_id)){
+        return false;
+    }
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT Golfers.Username FROM Golfers WHERE Golfers.Golfer_ID = ?;`;
+        db_conn.get(sql, [user_id], function (err, row) {
+            if(err){
+                console.log("Database Error:", err.message);
+                reject(false);
+            }
+            if(row){
+                console.log("Row returned:", row);
+                resolve(row);
+            }
+            else{
+                console.log("NO ROW RETURNED, NO USERNAME TO RETRIEVE FOR USERID");
+                reject(false);
+            }
+        });
+    });
+}
+
+async function updateEmail(userID, newEmail){
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE Golfers SET Email = ? WHERE Golfer_ID = ?;`;
+        db_conn.run(sql, [newEmail, userID], function (err) {
+            if(err){
+                console.log(`Database Error:`, err.message);
+                reject({ status: 500, message: "DATABASE ERROR UPDATING EMAIL" });
+            }
+            else if(this.changes > 0){
+                console.log("Email successfully modified in database");
+                resolve({ status: 200, message: "UPDATED EMAIL SUCCESSFULLY" });
+            }
+            else {
+                console.log("Email update failed (no rows affected)");
+                reject({ status: 406, message: "EMAIL NOT CHANGED" });
+            }
+        });
+    });
+}
+async function updatePhoneNumber(userID, newPhone){
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE Golfers SET Phone_Number = ? WHERE Golfer_ID = ?;`;
+        db_conn.run(sql, [newPhone, userID], function (err) {
+            if(err){
+                console.log(`Database Error:`, err.message);
+                reject({ status: 500, message: "DATABASE ERROR UPDATING PHONE NUMBER" });
+            }
+            else if(this.changes > 0){
+                console.log("Phone Number successfully modified in database");
+                resolve({ status: 200, message: "UPDATED PHONE NUMBER SUCCESSFULLY" });
+            }
+            else {
+                console.log("Phone Number update failed (no rows affected)");
+                reject({ status: 406, message: "PHONE NUMBER NOT CHANGED" });
+            }
+        });
+    });
+}
+async function updateUsername(userID, newUsername){
+    
+    return new Promise((resolve, reject) => { 
+        check_if_username_present(newUsername, (err, exists) =>{
+            if(err) {
+                console.error("An error occurred:", err);
+                reject({status : 500, message : "INTERNAL SERVER ERROR WHILE CHECKING IF USERNAME TAKEN\nPLEASE TRY AGAIN. SORRY!"})
+            } else {
+                if (exists) {
+                    console.log("Username already taken.");
+                    reject({status : 409, message : `USER ALREADY EXISTS WITH USERNAME ${newUsername}, PLEASE TRY ANOTHER USERNAME`})
+                } else {
+                    console.log("Username is available for use.");
+                    
+                    
+                    //if the username was valid run an insert query to change it
+                    let sql = `UPDATE Golfers SET Username = ? WHERE Golfer_ID = ?;`;
+                    db_conn.run(sql, [newUsername, userID], function (err) {  // Use function() instead of () => {}
+                        if (err) {
+                            console.log(`❌ Database error:`, err.message);
+                            reject({ status: 500, message: "DATABASE ERROR UPDATING USERNAME" });
+                        }
+                        else if (this.changes > 0) {
+                            console.log("Username successfully modified in database");
+                            resolve({ status: 200, message: "UPDATED USERNAME SUCCESSFULLY" });
+                        } else {
+                            console.log("Username update failed (no rows affected)");
+                            reject({ status: 406, message: "USERNAME NOT CHANGED" });
+                        }
+                    });
+                }
+            }
+        });           
+    });
+
+    
+
+
+}
+async function updatePassword(userID, newPassword) {
+    try {
+        // Wait for the password to be hashed
+        const newHashedPassword = await encrypt_password(newPassword);
+        console.log("Hashed Password:", newHashedPassword);
+
+        // SQL query
+        const sql = `UPDATE Golfers SET Password = ? WHERE Golfer_ID = ?;`;
+
+        // Execute the query inside a Promise to handle async behavior
+        return new Promise((resolve, reject) => {
+            db_conn.run(sql, [newHashedPassword, userID], function (err) {
+                if (err) {
+                    console.error("Database Error:", err.message);
+                    reject({ status: 500, message: "DATABASE ERROR UPDATING PASSWORD" });
+                } else if (this.changes > 0) {
+                    console.log("Password successfully modified in database");
+                    resolve({ status: 200, message: "UPDATED PASSWORD SUCCESSFULLY" });
+                } else {
+                    console.log("Password update failed (no rows affected)");
+                    reject({ status: 406, message: "PASSWORD NOT CHANGED" });
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error("Error hashing password:", error);
+        throw { status: 500, message: "ERROR HASHING PASSWORD" };
+    }
+}
 
 function isAdministrator(user_id) {
     return new Promise((resolve, reject) => {

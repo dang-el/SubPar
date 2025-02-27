@@ -95,7 +95,18 @@ struct FriendsView: View {
                 ScrollView {
                     VStack(spacing: 15) {
                         ForEach(viewModel.Friends, id: \.Golfer_ID) { friend in
-                            FriendCard(friend: friend)
+                            Button {
+                                //do something
+                                let username = friend.Username
+                                print("Friend Card Clicked: \(username)")
+                            } label: {
+                                FriendCard(friend: friend)
+                                    
+                            }
+                            .buttonStyle(.plain)
+                            
+
+                            
                         }
                     }
                     .padding()

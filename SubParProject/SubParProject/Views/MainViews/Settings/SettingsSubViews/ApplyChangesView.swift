@@ -27,7 +27,17 @@ struct ApplyChangesView : View{
                 Text("Apply Changes")
                     .font(.largeTitle)
                     .bold()
+                if(viewModel.applyChangesResponse != ""){
+                    Text(viewModel.applyChangesResponse)
+                        .bold()
+                        
+                        
+                }
+                else{
+                    EmptyView()
+                }
                 Spacer()
+                
                 if(viewModel.wasFetched){
                     ChangesView(viewModel: viewModel).environmentObject(userAuth)
                 }
@@ -37,6 +47,7 @@ struct ApplyChangesView : View{
                 
                 Spacer()
                 StyledButton(title: "Go Back", isPrimary: true) {
+                    viewModel.applyChangesResponse = ""
                     navigationPath.removeLast()
                 }
                 .frame(width: 255)
@@ -50,13 +61,9 @@ struct ApplyChangesView : View{
         @EnvironmentObject var userAuth : UserAuth
         @StateObject var viewModel : SettingsViewModel
         var body : some View {
+            
             VStack(spacing: 50) {
                 
-                if(viewModel.applyChangesResponse != ""){
-                    Text(viewModel.applyChangesResponse)
-                        .bold()
-                        .font(.title3)
-                }
                 
                 UsernameChangesView(viewModel: viewModel)
                 
@@ -67,10 +74,14 @@ struct ApplyChangesView : View{
                 PhoneNumberChangesView(viewModel: viewModel)
                 
                 StyledButton(title: "Submit Changes for Review") {
-                    viewModel.applyChanges(userAuth: userAuth)
+                    Task{
+                        await viewModel.applyChanges(userAuth: userAuth)
+                    }
+                    
                 }
                 .frame(width: 255)
             }
+            
             
         }
         struct EmailChangesView : View {
