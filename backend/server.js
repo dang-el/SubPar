@@ -11,7 +11,6 @@ app.use(morgan('dev'));
 app.use(express.json({limit : '10mb'}))
 
 app.listen(6000, () => console.log('The server is up and running...'));
-
 const db_conn = new sqlite3.Database('../references/SubParDB.db', (err) => {
     if (err) {
         console.error("Error connecting to the database:", err.message);

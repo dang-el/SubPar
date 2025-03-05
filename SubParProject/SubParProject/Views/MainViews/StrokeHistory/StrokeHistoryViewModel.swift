@@ -6,7 +6,8 @@
 //
 
 import Foundation
-final class StrokeHistoryViewModel : ObservableObject{
+@MainActor
+final class StrokeHistoryViewModel : ObservableObject, Sendable{
     struct Stroke: Codable, Identifiable {
         var id: Int
         var userID: Int

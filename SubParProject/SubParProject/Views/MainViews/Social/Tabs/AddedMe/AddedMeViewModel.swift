@@ -6,8 +6,8 @@
 //
 
 import Foundation
-
-final class AddedMeViewModel : ObservableObject {
+@MainActor
+final class AddedMeViewModel : ObservableObject, Sendable {
     @Published var FriendRequests: [GolferResponse] = [] // List of golfers fetched from the server
     @Published var loading: Bool = false
     struct GolferResponse: Codable, Hashable {

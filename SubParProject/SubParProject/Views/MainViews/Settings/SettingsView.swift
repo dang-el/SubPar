@@ -50,7 +50,7 @@ struct SettingsView: View {
             case .adminView:
                 AdministratorView()
             case .establishmentView:
-                EstablishmentsView()
+                EstablishmentsView(isEstablishment: viewModel.isEstablishmemnt, navigationPath: $navigationPath)
             }
         }
     }
