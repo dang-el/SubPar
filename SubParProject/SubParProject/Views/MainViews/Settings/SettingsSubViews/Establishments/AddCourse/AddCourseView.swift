@@ -10,6 +10,7 @@ import SwiftUI
 struct AddCourseView: View {
     @Binding var navigationPath : NavigationPath
     @StateObject var viewModel : EstablishmentsViewModel
+    @EnvironmentObject var userAuth : UserAuth
 
     var body: some View {
         ZStack{
@@ -50,6 +51,7 @@ struct AddCourseView: View {
             switch destination {
                 case .add9Holes:
                 Add9HolesView(navigationPath: $navigationPath, viewModel: viewModel)
+                    .environmentObject(userAuth)
             }
         }
         

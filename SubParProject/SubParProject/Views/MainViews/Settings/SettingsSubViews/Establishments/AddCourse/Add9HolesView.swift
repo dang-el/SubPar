@@ -10,7 +10,7 @@ import SwiftUI
 struct Add9HolesView: View {
     @Binding var navigationPath: NavigationPath
     @StateObject var viewModel: EstablishmentsViewModel
-    
+    @EnvironmentObject var userAuth : UserAuth
     var body: some View {
         ZStack {
             // Full-screen gradient background
@@ -33,6 +33,8 @@ struct Add9HolesView: View {
                 }
                 
                 SubmitCourseView(viewModel: viewModel, navigationPath: $navigationPath)
+                
+                    
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
@@ -116,6 +118,9 @@ struct Add9HolesView: View {
                                 .foregroundColor(.primary)
                         }
                     }
+                    .onAppear(perform: {
+                        viewModel.holes[holeNumber-1].holeNumber = "\(holeNumber)"
+                    })
                     .padding(.horizontal)
                 }
         }
@@ -184,6 +189,7 @@ struct Add9HolesView: View {
     struct SubmitCourseView : View {
         @StateObject var viewModel : EstablishmentsViewModel
         @Binding var navigationPath : NavigationPath
+        @EnvironmentObject var userAuth : UserAuth
         var body: some View {
             ZStack{
                 LinearGradient(gradient: Gradient(colors:
@@ -206,7 +212,7 @@ struct Add9HolesView: View {
                     VStack(spacing: 55){
                         StyledButton(title: "Upload All Course Data") {
                             Task{
-                                try await viewModel.uploadCourse()
+                                try await viewModel.uploadCourse(userAuth: userAuth)
                             }
                             
                         }

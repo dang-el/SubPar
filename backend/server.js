@@ -3,6 +3,7 @@
 const express = require('express'); 
 const morgan = require('morgan'); 
 const bcrypt = require('bcrypt');
+const e = require('express');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express(); 
@@ -531,9 +532,257 @@ app.post('/golfer/update/information', async (req, res) => {
     }
     catch(err){
         console.log(err);
-        return res.status(500).send()
+        return res.status(500).send();
     }
 });
+app.post('/establishments/course/upload', async (req, res) => {
+    const data = req.body;
+    if(!checkUploadCourseData(data)){
+        return res.status(400).json({message : "data invalid"});
+    }
+    //store the data in local memory as constants
+    const userID = data.userID;
+    const courseName = data.courseName;
+    const estDate = data.dateEstablished;
+    const slope = data.slopeRating;
+    const holes = data.holes;
+    //upload a course into the database first and get the id back of that new course
+    let result = undefined;
+    let estID = undefined
+    try{
+        estID = await getEstablishmentID(userID)
+        if(estID.status !== 200){
+            return res.status(estID.status).json({error: estID.message});
+        }
+        result = await uploadCourseToDB(estID.estID, courseName, estDate, slope, holes);
+    }
+    catch (err){
+        console.log(err);
+        return res.status(500).json({message : 'internal server error'});
+    }
+    finally{
+        if(result !== undefined && result.status === 200){
+            return res.status(200).json(result)
+        }
+        return res.status(400).json(result)
+    }
+    
+});
+async function getEstablishmentID(userID){
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT Establishments.Establishment_ID FROM Establishments WHERE Establishments.Golfer_ID = ?;`
+        db_conn.get(sql, [userID], (err, row) =>{
+            if(err){
+                reject({status: 500, message: "error"});
+            }
+            if(!row){
+                reject({status: 402, message: "no establishment to get"});
+            }
+            else{
+                resolve({status: 200, estID : row.Establishment_ID});
+            }
+        });
+    });
+}
+async function uploadCourseToDB(eID, name, est, slope, holes){
+    //make a new course and return an ID of the new created course
+    let courseID = undefined;
+    try{
+        //make a course
+        const result = await insertCourseData(name, est, slope); 
+        console.log(result)
+        if(result.status !== 200){
+            return {status : 400, message : 'Course could not be created.'}; // if we couldnt make a course thhen we shoudnt continue
+        }
+        courseID = result.courseID;// we successfully make a course and retrieve and ID of the course
+        //join course with establishment
+        const result2 = await joinCourseToEstablishment(eID, courseID);
+        console.log(result2)
+        if(result2.status !== 200){
+            //if it wasnt good just delete the hole and return since we couldnt tie it to an establishment
+            await removeCourse(courseID); //remove the course though because it was created just not linked to est.
+            return {status : 400, message : 'Course could not be created.'}// no harm no foul. they can try again
+        }
+        //if we didnt get snared into the if statement then we have a couse joined with out establishment ID
+        //we need to add all 9 holes to the course
+        const result3 = await add9HolesToCourse(courseID, holes);
+        if(result3.status !== 200 && result3.status !== 410){
+            removeWholeCourse(courseID);
+            //there was a problem on the final step. delete everything relating to the current course
+            return {status : 400, message : 'Course could not be created.'}
+        }
+        else if(result3.status === 410){
+            removeCourse(courseID);
+            untieEstCourse(courseID);
+            return {status : 400, message : 'Course could not be created.'}
+        }
+        else {
+            return {status : 200, message : 'Course successfully created'};
+        }
+    }catch(err){
+        console.log(err);
+    }
+}
+async function add9HolesToCourse(courseID, holes_arr) {
+    // Validate the holes array
+    let par_present = true;
+    let yardage_present = true;
+
+    // Check for missing values and reset summaries
+    holes_arr.forEach(hole => {
+        if (hole.par === '') {
+            par_present = false;
+        }
+        if (hole.yardage === '') {
+            yardage_present = false; // Fixed from yardage_present to yardage
+        }
+        if (hole.description.includes('Your Summary Here...')) {
+            hole.description = ''; // Reset default description
+        }
+    });
+
+    // If any mandatory field is missing, return an error
+    if (!par_present || !yardage_present) {
+        return { status: 410, message: 'par and yardage missing' };
+    }
+
+    // Attempt to insert holes into the database
+    let allGood = true;
+    for (const hole of holes_arr) {
+        try {
+            const result4 = await insertHole(courseID, hole.par, hole.holeNumber, hole.yardage, hole.description);
+            if (result4.status !== 200) {
+                allGood = false;
+                break;
+            }
+        } catch (error) {
+            console.error('Error inserting hole:', error);
+            allGood = false;
+            break;
+        }
+    }
+
+    // Return response based on the result of the insertions
+    if (!allGood) {
+        return { status: 400, message: 'not all holes inserted' };
+    } else {
+        return { status: 200, message: 'all holes inserted' };
+    }
+}
+
+async function insertHole(courseID, par, num, yards, desc){
+    return new Promise((resolve, reject) => {
+        const sql = `INSERT INTO Holes (Course_ID, Par, Hole_Number, Yardage, Description) VALUES (?,?,?,?,?);`
+        db_conn.run(sql, [courseID, par, num, yards, desc], function (err){
+            if(err){
+                reject({status : 403, message : 'Could not add Hole to Course'});
+            }
+            if(this.changes > 0){
+                resolve({status : 200, message : 'Hole Added'});
+            }
+            else{
+                reject({status : 403, message : 'Could not add Hole to Course'});
+            }
+        })
+    });
+}
+
+async function removeWholeCourse(courseID){
+    removeHolesFromCourse(courseID);
+    removeCourse(courseID);
+    untieEstCourse(courseID);
+}
+
+async function removeCourse(courseID){
+    //if the id is present in the course table then delete it
+    return new Promise((resolve, reject) =>{
+        const sql = `DELETE FROM Courses WHERE Course_ID = ?;`
+        db_conn.run(sql, [courseID], function (err) {
+            if(err){
+                reject({status : 501, message: 'error deleting holes on courseID'});
+            }
+            if(this.changes > 0){
+                resolve({status : 200, message : `${this.changes} rows deleted`});
+            }
+            else{
+                reject({status : 502, message: 'error deleting holes on courseID'});
+            }
+        });
+    });
+}
+async function removeHolesFromCourse(courseID){
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM Holes WHERE Course_ID = ?;`
+        db_conn.run(sql, [courseID], function (err) {
+            if(err){
+                reject({status : 501, message: 'error deleting holes on courseID'});
+            }
+            if(this.changes > 0){
+                resolve({status : 200, message : `${this.changes} rows deleted`});
+            }
+            else{
+                reject({status : 502, message: 'error deleting holes on courseID'});
+            }
+        });
+    });
+}
+async function untieEstCourse(courseID){
+    //remove from the EstabluishmentHasCourse Table
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM CourseBelongsToEstablishment WHERE Course_ID = ?;`
+        db_conn.run(sql, [courseID], function (err) {
+            if(err){
+                reject({status : 501, message: 'error deleting holes on courseID'});
+            }
+            if(this.changes > 0){
+                resolve({status : 200, message : `${this.changes} rows deleted`});
+            }
+            else{
+                reject({status : 502, message: 'error deleting holes on courseID'});
+            }
+        });
+    });
+}
+async function joinCourseToEstablishment(estID, courseID){
+    return new Promise((resolve, reject) =>{
+        const sql = `INSERT INTO CourseBelongsToEstablishment (Establishment_ID, Course_ID) VALUES (?,?);`
+        db_conn.run(sql, [estID, courseID], function (err){
+            if (err) {
+                return reject({ status: 500, message: "Database insert error" });
+            }
+            // Use `this.lastID` to get the ID of the newly inserted row
+            resolve({ status: 200, changes: this.changes > 0 });
+        })
+    });
+}
+async function insertCourseData(name, est, slope) {
+    return new Promise((resolve, reject) =>{
+        const sql = `
+        INSERT INTO Courses (Name, Established, Difficulty)
+        VALUES (?,?,?);`
+        db_conn.run(sql, [name, est, slope], function (err) {
+            if (err) {
+                return reject({ status: 500, message: "Database insert error" });
+            }
+            // Use `this.lastID` to get the ID of the newly inserted row
+            resolve({ status: 200, courseID: this.lastID });
+        });
+    });
+}
+function checkUploadCourseData(data){
+    return data.hasOwnProperty('userID') && data.userID && !isNaN(data.userID) && data.userID > 0 &&
+           data.hasOwnProperty('courseName') && data.courseName && 
+           data.hasOwnProperty('dateEstablished') && data.dateEstablished &&
+           data.hasOwnProperty('slopeRating') && data.slopeRating &&
+           data.hasOwnProperty('holes') && data.holes && Array.isArray(data.holes) && data.holes.length === 9;
+}
+function convertToSingleLine(multiLineString) {
+    return multiLineString
+        .split('\n')                     // Split by newlines
+        .map(line => line.trim())        // Trim spaces from each line
+        .filter(line => line !== '')     // Remove empty lines
+        .join(' ');                      // Join all lines with a single space
+}
 function checkGolferUpdateQueryResults(username, password, email, phone_number, updatingUsername, updatingPassword, updatingEmail, updatingPhone) {
     let success_message = "Changes made: ";
     let failure_message = "Requested but not updated: ";

@@ -11,6 +11,7 @@ struct EstablishmentsView: View {
     @State var isEstablishment: Bool
     @Binding var navigationPath : NavigationPath
     @StateObject var viewModel : EstablishmentsViewModel = EstablishmentsViewModel()
+    @EnvironmentObject var userAuth : UserAuth
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors:
@@ -30,44 +31,44 @@ struct EstablishmentsView: View {
                     if(isEstablishment){
                         if(viewModel.Establishments.count != 0){
                             ContentView(navigationPath: $navigationPath)
-                                .padding(.top, 20)
+                                
+                                
                         }
                         else{
-                            VStack(spacing: 375){
-                                
-                                Text("No Establishments to Fetch")
-                                    .foregroundStyle(.quaternary)
-                                
-                                StyledButton(title: "Add a Course") {
-                                    print("navigate to add course view")
-                                    navigationPath.append(EstablishmentsViewModel.EstablishmentsDestination.addCourse)
-                                }
-                                .frame(width: 255)
-                            }
-                            .padding(.top, 125)
-                            
+                            Text("No Establishments to Fetch")
+                                .foregroundStyle(.quaternary)
+                                .padding(.top, 125)
                         }
-                        
                     }
                     else{
                         NeedSignupView()
                     }
                 }
-                .padding(.top, 10)
-                .padding(.bottom, 30)
+                .padding()
+                
+                
                 
                 Spacer()
-                StyledButton(title: "Go Back", isPrimary: true) {
-                    navigationPath.removeLast()
+                VStack(spacing: 45){
+                    StyledButton(title: "Add a Course") {
+                        print("navigate to add course view")
+                        navigationPath.append(EstablishmentsViewModel.EstablishmentsDestination.addCourse)
+                    }
+                    .frame(width: 255)
+                    StyledButton(title: "Go Back", isPrimary: true) {
+                        navigationPath.removeLast()
+                    }
+                    .frame(width: 255)
                 }
-                .frame(width: 255)
+                
             }
         }
         .navigationBarBackButtonHidden(true)
         .navigationDestination(for: EstablishmentsViewModel.EstablishmentsDestination.self) { destination in
             switch destination {
-                case .addCourse:
+            case .addCourse:
                 AddCourseView(navigationPath: $navigationPath, viewModel: viewModel)
+                    .environmentObject(userAuth)
             }
         }
         
@@ -75,21 +76,14 @@ struct EstablishmentsView: View {
     
     struct ContentView : View {
         @Binding var navigationPath : NavigationPath
+        @EnvironmentObject var userAuth : UserAuth
         var body: some View {
-            
+            Text("Top of")
             ScrollView{
                 Text("Scrollview")
             }
             Text("Bottom of")
-            VStack(spacing: 75){
-                StyledButton(title: "Add a Course") {
-                    print("navigate to add course view")
-                    navigationPath.append(EstablishmentsViewModel.EstablishmentsDestination.addCourse)
-                }
-                .frame(width: 255)
-                
-                
-            }
+            
         }
     }
     struct NeedSignupView : View {

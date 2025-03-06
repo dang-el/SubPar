@@ -51,6 +51,7 @@ struct SettingsView: View {
                 AdministratorView()
             case .establishmentView:
                 EstablishmentsView(isEstablishment: viewModel.isEstablishmemnt, navigationPath: $navigationPath)
+                    .environmentObject(userAuth)
             }
         }
     }
