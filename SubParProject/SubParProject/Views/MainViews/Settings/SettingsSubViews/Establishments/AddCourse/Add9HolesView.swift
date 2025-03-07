@@ -205,6 +205,15 @@ struct Add9HolesView: View {
                     Text("Submit Course")
                         .font(.largeTitle)
                         .bold()
+                    if(viewModel.messageFromServer != ""){
+                        Text(viewModel.messageFromServer)
+                            .padding(.top, 20)
+                    }
+                    else{
+                        EmptyView()
+                    }
+                    
+                        
                     Spacer()
                     ContentView(viewModel: viewModel)
                         .padding()

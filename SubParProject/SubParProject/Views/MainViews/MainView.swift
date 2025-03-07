@@ -10,6 +10,7 @@ struct MainView: View {
     @EnvironmentObject var navigationManager: NavigationManager
     @EnvironmentObject var userAuth: UserAuth
     @State private var navigationPath = NavigationPath()
+    @StateObject var viewModel : MainViewModel = MainViewModel()
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -43,23 +44,10 @@ struct MainView: View {
 
                     Spacer()
 
-                    Text("RECENTLY PLAYED COURSES")
+                    Text("COURSES")
                         .fontWeight(.bold)
                     
-                    ScrollView {
-                        let num = 20
-                        VStack(spacing: 20) {
-                            ForEach(1...num, id: \..self) { index in
-                                Text("Dummy Content Item \(index)")
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 5)
-                                    .padding(.horizontal)
-                            }
-                        }
-                    }
+                    CoursesView(viewModel : viewModel)
                     .padding(.vertical)
 
                     Spacer()
@@ -115,6 +103,53 @@ struct MainView: View {
                         .environmentObject(userAuth)
                 default:
                     Text("Unknown Destination")
+                }
+            }
+        }
+    }
+    struct CoursesView: View {
+        @StateObject var viewModel: MainViewModel
+
+        var body: some View {
+            ScrollView {
+                // Show a loading message until courses are fetched
+                if(viewModel.isLoading){
+                    HStack{
+                        Text("Loading Courses...")
+                        ProgressView()
+                    }
+                    .foregroundStyle(.quaternary)
+                }
+                else if viewModel.courses.isEmpty {
+                    Text("Loading Courses...")
+                        .padding()
+                } else {
+                    LazyVStack(spacing: 20) {
+                        ForEach(viewModel.courses, id: \.Name) { course in
+                            VStack(alignment: .leading) {
+                                Text(course.Name)
+                                    .font(.headline)
+                                    .padding(.bottom, 2)
+                                Text("Established: \(course.Established)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("Difficulty: \(course.Difficulty)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                            .padding(.horizontal)
+                        }
+                    }
+                }
+            }
+            .onAppear {
+                Task {
+                    await viewModel.getCourses()
                 }
             }
         }

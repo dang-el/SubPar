@@ -10,7 +10,7 @@ import SwiftUI
 struct EstablishmentsView: View {
     @State var isEstablishment: Bool
     @Binding var navigationPath : NavigationPath
-    @StateObject var viewModel : EstablishmentsViewModel = EstablishmentsViewModel()
+    @ObservedObject var viewModel : EstablishmentsViewModel = EstablishmentsViewModel()
     @EnvironmentObject var userAuth : UserAuth
     var body: some View {
         ZStack{
@@ -29,40 +29,48 @@ struct EstablishmentsView: View {
                     .bold()
                 VStack{
                     if(isEstablishment){
-                        if(viewModel.Establishments.count != 0){
-                            ContentView(navigationPath: $navigationPath)
-                                
-                                
-                        }
-                        else{
-                            Text("No Establishments to Fetch")
-                                .foregroundStyle(.quaternary)
-                                .padding(.top, 125)
+                        CoursesView(viewModel: viewModel)
+                            .environmentObject(userAuth)
+                            .onAppear {
+                                Task {
+                                    await viewModel.getCoursesOfEstablishment(userAuth: userAuth)
+                                }
+                            }
+                        Spacer()
+                        VStack(spacing: 45){
+                            StyledButton(title: "Add a Course") {
+                                print("navigate to add course view")
+                                navigationPath.append(EstablishmentsViewModel.EstablishmentsDestination.addCourse)
+                            }
+                            .frame(width: 255)
+                            StyledButton(title: "Go Back", isPrimary: true) {
+                                navigationPath.removeLast()
+                            }
+                            .frame(width: 255)
                         }
                     }
                     else{
-                        NeedSignupView()
+                        VStack{
+                            Spacer()
+                            NeedSignupView()
+                            Spacer()
+                            StyledButton(title: "Go Back", isPrimary: true) {
+                                navigationPath.removeLast()
+                            }
+                            .frame(width: 255)
+                        }
+                        
                     }
                 }
                 .padding()
                 
                 
                 
-                Spacer()
-                VStack(spacing: 45){
-                    StyledButton(title: "Add a Course") {
-                        print("navigate to add course view")
-                        navigationPath.append(EstablishmentsViewModel.EstablishmentsDestination.addCourse)
-                    }
-                    .frame(width: 255)
-                    StyledButton(title: "Go Back", isPrimary: true) {
-                        navigationPath.removeLast()
-                    }
-                    .frame(width: 255)
-                }
+                
                 
             }
         }
+       
         .navigationBarBackButtonHidden(true)
         .navigationDestination(for: EstablishmentsViewModel.EstablishmentsDestination.self) { destination in
             switch destination {
@@ -74,15 +82,47 @@ struct EstablishmentsView: View {
         
     }
     
-    struct ContentView : View {
-        @Binding var navigationPath : NavigationPath
+    struct CoursesView: View {
+        @ObservedObject var viewModel: EstablishmentsViewModel
         @EnvironmentObject var userAuth : UserAuth
+
         var body: some View {
-            Text("Top of")
-            ScrollView{
-                Text("Scrollview")
+            ScrollView {
+                // Show a loading message until courses are fetched
+                if(viewModel.isLoading){
+                    HStack{
+                        Text("Loading Courses...")
+                        ProgressView()
+                    }
+                    .foregroundStyle(.quaternary)
+                }
+                else if viewModel.courses.isEmpty {
+                    Text("No Courses Managed by You")
+                        .padding()
+                } else {
+                    LazyVStack(spacing: 20) {
+                        ForEach(viewModel.courses, id: \.Name) { course in
+                            VStack(alignment: .leading) {
+                                Text(course.Name)
+                                    .font(.headline)
+                                    .padding(.bottom, 2)
+                                Text("Established: \(course.Established)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("Difficulty: \(course.Difficulty)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                            .padding(.horizontal)
+                        }
+                    }
+                }
             }
-            Text("Bottom of")
             
         }
     }
@@ -99,4 +139,5 @@ struct EstablishmentsView: View {
 
 #Preview {
     EstablishmentsView(isEstablishment: true, navigationPath: .constant(NavigationPath()))
+        .environmentObject(UserAuth().log_in_user(userID: 1))
 }

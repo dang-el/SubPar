@@ -568,6 +568,103 @@ app.post('/establishments/course/upload', async (req, res) => {
     }
     
 });
+app.get('/courses', async (req, res) => {
+    let result = undefined;
+    try{
+        result = await getAllCourses();        
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).json({message : 'internal server error'});
+    }
+    finally{
+        console.log(result);
+        if(result !== undefined){
+            if(result.status === 200){
+                return res.status(200).json({courses : result.courses})
+            }
+            return res.status(500).json({message : 'internal server error'});
+        }    
+        else{
+            return res.status(500).json({message : 'internal server error'});
+        }
+    }
+});
+app.get('/courses/managed-by/:id', async (req, res) => {
+    let errorGettingCourses = false;
+    const userID = parseInt(req.params.id);
+    let result = undefined;
+    if(!checkID(userID)){
+        return res.status(400).json({message: 'invalid id'});
+    }
+    try{
+        const estID = await getEstablishmentID(userID);
+        if(estID.status === 402){
+            return res.status(402).json({message: 'user is not establishment'})
+        }
+        if(estID.status === 200){
+            result = await getCoursesOfEstablishment(estID.estID);
+        }
+        
+    }
+    catch (err){
+        console.log(err);
+        errorGettingCourses = true
+        return res.status(400).json({message: err});
+    }
+    finally{
+        if(!errorGettingCourses){
+            if(result !== undefined){
+                console.log({courses : result.courses});
+                return res.status(result.status).json({courses : result.courses})
+            }
+            else{
+                return res.status(402).json({message: 'user is not establishment'})
+            }
+        }
+        
+        
+    }
+    
+    
+});
+
+async function getAllCourses() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT Courses.Course_ID, Courses.Name, Courses.Established, Courses.Difficulty FROM Courses;`
+        db_conn.all(sql, [], (err, rows) => {
+            if(err){
+                reject({status : 500, message : 'error getting courses'});
+            }
+            if(!rows){
+                resolve({status : 200, courses : []});
+            }
+            else{
+                resolve({status : 200, courses : rows});
+            }
+        });
+    });
+}
+async function getCoursesOfEstablishment(estID) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+        SELECT Courses.Course_ID, Courses.Name, Courses.Established, Courses.Difficulty
+        FROM Courses
+        INNER JOIN CourseBelongsToEstablishment ON Courses.Course_ID = CourseBelongsToEstablishment.Course_ID
+        WHERE CourseBelongsToEstablishment.Establishment_ID = ?;
+        `;
+
+        db_conn.all(sql, [estID], (err, rows) => {
+            if (err) {
+                console.log(err);
+                reject({status : 500, message: 'Internal server error' });
+            }
+            resolve({status: 200, courses: rows });
+        });
+    });
+}
+
+
 async function getEstablishmentID(userID){
     return new Promise((resolve, reject) => {
         const sql = `SELECT Establishments.Establishment_ID FROM Establishments WHERE Establishments.Golfer_ID = ?;`
@@ -590,14 +687,12 @@ async function uploadCourseToDB(eID, name, est, slope, holes){
     try{
         //make a course
         const result = await insertCourseData(name, est, slope); 
-        console.log(result)
         if(result.status !== 200){
             return {status : 400, message : 'Course could not be created.'}; // if we couldnt make a course thhen we shoudnt continue
         }
         courseID = result.courseID;// we successfully make a course and retrieve and ID of the course
         //join course with establishment
         const result2 = await joinCourseToEstablishment(eID, courseID);
-        console.log(result2)
         if(result2.status !== 200){
             //if it wasnt good just delete the hole and return since we couldnt tie it to an establishment
             await removeCourse(courseID); //remove the course though because it was created just not linked to est.
@@ -630,10 +725,12 @@ async function add9HolesToCourse(courseID, holes_arr) {
 
     // Check for missing values and reset summaries
     holes_arr.forEach(hole => {
-        if (hole.par === '') {
+        const par = parseInt(hole.par)
+        const yardage = parseFloat(hole.yardage)
+        if (isNaN(par) || par < 3 || par > 5) {
             par_present = false;
         }
-        if (hole.yardage === '') {
+        if (isNaN(yardage) || yardage <= 0) {
             yardage_present = false; // Fixed from yardage_present to yardage
         }
         if (hole.description.includes('Your Summary Here...')) {

@@ -13,7 +13,18 @@ final class EstablishmentsViewModel : ObservableObject {
     @Published var courseName = ""
     @Published var dateEstablished = ""
     @Published var slopeRating = ""
-    @Published var Establishments : [EstablishmentsResponse] = []
+    @Published var messageFromServer : String = ""
+    @Published var courses : [Course] = []
+    @Published var isLoading : Bool = false
+    struct CoursesResponse : Codable{
+        var courses : [Course]
+    }
+    struct Course : Codable {
+        var Course_ID : Int
+        var Name : String
+        var Established : String
+        var Difficulty : String
+    }
     struct HoleData : Codable {
         var holeNumber : String = ""
         var par: String = ""
@@ -35,7 +46,8 @@ Beware of the slope on the right side of the green!
         var holes: [HoleData]
     }
     struct EstablishmentsResponse : Codable {
-        var name: String
+        var status: Int
+        var message: String
     }
     enum EstablishmentsDestination : Hashable {
         case addCourse
@@ -45,9 +57,9 @@ Beware of the slope on the right side of the green!
     }
     
     func uploadCourse(userAuth : UserAuth) async throws {
-        print("uploading \(self.courseName), \(self.dateEstablished), \(self.slopeRating)...")
+        
         let requestBody = UploadCourseRequest(userID: userAuth.get_userID() ?? -1, courseName: self.courseName, dateEstablished: self.dateEstablished, slopeRating: self.slopeRating, holes: self.holes)
-        print(requestBody)
+        
         
         
         do {
@@ -67,18 +79,51 @@ Beware of the slope on the right side of the green!
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = jsonData
 
-            let (_, response) = try await URLSession.shared.data(for: request)
-            print("✅ Received response:", response)
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
 
             // Decode the JSON data
-            //let estResp = try JSONDecoder().decode(EstablishmentsResponse.self, from: data)
+            let estResp = try JSONDecoder().decode(EstablishmentsResponse.self, from: data)
             // Update UI on main thread
-//            DispatchQueue.main.async {
-//
-//            }
+            DispatchQueue.main.async {
+                self.messageFromServer = estResp.message
+            }
 
         } catch {
             print("❌ Error in uploadCourse():", error)
         }
     }
+    func getCoursesOfEstablishment(userAuth: UserAuth) async {
+        self.isLoading = true
+        
+
+        guard let url = URL(string: "http://127.0.0.1:6000/courses/managed-by/\(userAuth.get_userID() ?? -1)") else {
+            print("❌ Invalid URL")
+            self.isLoading = false
+            return
+        }
+
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                
+                
+                let json = try JSONDecoder().decode(CoursesResponse.self, from: data)
+                
+                await MainActor.run {
+                    self.courses = json.courses
+                    
+                    self.isLoading = false
+                }
+            } else {
+                await MainActor.run { self.isLoading = false }
+            }
+        } catch {
+            print("❌ Error fetching courses:", error)
+            await MainActor.run { self.isLoading = false }
+        }
+        
+    }
+
 }
